@@ -30,5 +30,6 @@ __pycache__
 !**/.*config
 !**/.env
 !**/.github
+!**/.gitmodules
 !**/.readthedocs.yml
 !**/.storybook

@@ -1,0 +1,3 @@
+[submodule "automerge"]
+ path = externals/automerge
+ url = https://github.com/datalayer-contrib/automerge
