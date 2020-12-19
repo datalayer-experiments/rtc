@@ -1,0 +1,34 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# Exclude.
+.*
+_vendor*/*
+node_modules
+npm-debug.log*
+package-lock.json
+yarn-debug.log*
+yarn-error.log*
+yarn.lock
+build
+coverage
+dist
+lib
+__pycache__
+*.code-workspace
+*.ipynb
+*.profraw
+*.tsbuildinfo
+*.egg-info
+
+**/data-server
+**/client-docs.json
+
+# Include.
+!**/.*ignore
+!**/.*rc
+!**/.*rc.js
+!**/.*config
+!**/.env
+!**/.github
+!**/.readthedocs.yml
+!**/.storybook
