@@ -9,7 +9,7 @@ import {
 } from "./AMActions";
 import { Doc } from './AMActions';
 import simpleDiff from '../utils/simpleDiff'
-import ReconnectingWebSocket from './reconnecting-websocket'
+import ReconnectingWebSocket from './ReconnectingWebsocket'
 
 const DOC_ID = 'reacttextarea';
 
@@ -86,7 +86,7 @@ const AMEditor = (props: any) => {
 
   return (
     <div>
-      <h3>Automerge textContent</h3>
+      <h3>Automerge TextArea</h3>
       <textarea 
         cols={80}
         rows={5}
