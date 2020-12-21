@@ -27,31 +27,23 @@ const client = new AutomergeClient({
   onChange: null
 });
 
-// Actions.
-
-function change(docId, attr, value) {
-  const ret = client.change(docId, doc => {
-    doc[attr] = value;
-  });
-};
-
 const AMEditor = (props: any) => {
 
-  const [textContent, settextContent] = useState('');
-  const [history, setHistory] = useState(new Array(new Array()));
+  let textArea: HTMLTextAreaElement;
+
   const [doc, setDoc] = useState<Doc>(initDocument());
+  const [history, setHistory] = useState(new Array(new Array()));
 
   const handleTextChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     event.preventDefault();
     let diff = simpleDiff(doc.textContent.toString(), event.target.value);
     const newDoc = applyInput(doc, diff);
+    setDoc(newDoc);
     const changes = getChanges(doc, newDoc);
     const ret = client.applyChanges(DOC_ID, changes);
     if (!ret) {
       console.error('Failed to apply changes to the doc.')
     };
-    setDoc(newDoc);
-    settextContent(event.target.value);
   };
 
   const handleShowHistory = () => {
@@ -68,23 +60,27 @@ const AMEditor = (props: any) => {
         const m = JSON.parse(message.data);
         if (m.data && m.data.changes) {
           const changes = m.data.changes;
-          console.log('Changes:', changes);
           const changedDoc = applyChanges(doc, changes);
           setDoc(changedDoc);
-          settextContent(changedDoc.textContent.toString());
         }
       }
     };
   });
 
+  let text = '';
+  if (doc.textContent) {
+    text = doc.textContent.toString();
+  }
+
   return (
     <div>
       <h3>Automerge TextArea</h3>
-      <textarea 
+      <textarea
         cols={80}
         rows={5}
-        onChange={handleTextChange} 
-        value={textContent} 
+        onChange={handleTextChange}
+        value={text}
+        ref={(input) => { textArea = input }}
       />
       <div><button onClick={handleShowHistory}>Automerge History</button></div>
       <div>{ history.map(h1 => h1.map(h2 => <div>{h2}</div>)) }</div>
