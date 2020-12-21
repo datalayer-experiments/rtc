@@ -1,6 +1,7 @@
 import Automerge, { DocSet, Text } from 'automerge'
 
 /*
+
 # Protocol
 
 ## Both Directions:
@@ -19,7 +20,7 @@ import Automerge, { DocSet, Text } from 'automerge'
 export type Doc = {
   docId: string;
   textContent: Text;
-}
+};
 
 export class Document {
   private sets = []
@@ -54,7 +55,6 @@ export class Document {
       if (doc === this.doc) return // already handled
       this.doc = doc
       this.onChange(this.id, this.doc)
-
       for (const other of this.sets) {
         if (other.set === docSet) continue
         other.set.setDoc(docId, doc)
@@ -65,10 +65,10 @@ export class Document {
   }
 
   public removeFromSet(docSet) {
-    const set = this.sets.find(set => set.set === docSet)
+    const set = this.sets.find(set => set.set === docSet);
     if (!set) return // this doc is not in specified set
-    docSet.unregisterHandler(set.handler)
-    this.sets = this.sets.filter(set => set.set !== docSet)
+    docSet.unregisterHandler(set.handler);
+    this.sets = this.sets.filter(set => set.set !== docSet);
   }
 
 }
@@ -85,20 +85,15 @@ export default class AutomergeServer {
   * checkAccess: (id: string, req: Request) => Promise<boolean>
   */
   public constructor({ loadDocument, saveDocument, checkAccess }) {
-
     if (typeof loadDocument !== 'function')
       throw new Error('loadDocument option must be function')
     if (typeof saveDocument !== 'function')
       throw new Error('saveDocument option must be function')
-
     this.loadDocument = loadDocument
     this.saveDocument = saveDocument
     this.checkAccess = checkAccess
-
     this.docs = {}
-
     this.onChange = this.onChange.bind(this)
-
   }
 
   public handleSocket(ws, req) {

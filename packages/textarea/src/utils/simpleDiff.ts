@@ -19,7 +19,7 @@
  */
 
 export type SimpleDiff = {
-  pos: number; 
+  index: number; 
   remove: number; 
   insert: string;
 };
@@ -46,7 +46,7 @@ const simpleDiff = (a: string, b: string): SimpleDiff => {
     }
   }
   return {
-    pos: left, // TODO: rename to index (also in type above)
+    index: left, // TODO: rename to index (also in type above)
     remove: a.length - left - right,
     insert: b.slice(left, b.length - right)
   }

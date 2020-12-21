@@ -9,38 +9,36 @@ import {
 } from "./AMActions";
 import { Doc } from './AMActions';
 import simpleDiff from '../utils/simpleDiff'
-import ReconnectingWebSocket from './ReconnectingWebsocket'
+import ReconnectingWebSocket from './ReconnectingWebsocket';
 
 const DOC_ID = 'reacttextarea';
-
+/*
 const ws = new ReconnectingWebSocket('ws://localhost:4400/automerge')
-
 ws.addEventListener('close', () => {
   if (ws._shouldReconnect) ws._connect()
 })
+*/
+const ws = new WebSocket('ws://localhost:4400/automerge');
 
 const client = new AutomergeClient({
   socket: ws,
   savedData: null,
   save: null,
   onChange: null
-})
+});
 
-// Actions
-
-function subscribe(args) {
-  client.subscribe(args)
-}
+// Actions.
 
 function change(docId, attr, value) {
   const ret = client.change(docId, doc => {
-    doc[attr] = value
-  })
-}
+    doc[attr] = value;
+  });
+};
 
 const AMEditor = (props: any) => {
 
   const [textContent, settextContent] = useState('');
+  const [history, setHistory] = useState(new Array(new Array()));
   const [doc, setDoc] = useState<Doc>(initDocument());
 
   const handleTextChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
@@ -48,22 +46,20 @@ const AMEditor = (props: any) => {
     let diff = simpleDiff(doc.textContent.toString(), event.target.value);
     const newDoc = applyInput(doc, diff);
     const changes = getChanges(doc, newDoc);
-    console.log('Diff', diff);
-    console.log('Changes', changes);
-    const ret = client.diff(DOC_ID, diff.pos, diff.remove, diff.insert);
+    const ret = client.applyChanges(DOC_ID, changes);
     if (!ret) {
-      console.error('Failed to diff doc.')
-    }  
+      console.error('Failed to apply changes to the doc.')
+    };
     setDoc(newDoc);
     settextContent(event.target.value);
   };
 
   const handleShowHistory = () => {
-    getHistory(doc);
+    setHistory(getHistory(doc));
   };
 
   useEffect(() => {
-    subscribe(DOC_ID);
+    client.subscribe(DOC_ID);
   }, []);
 
   useEffect(() => {
@@ -71,14 +67,11 @@ const AMEditor = (props: any) => {
       if (message.data) {
         const m = JSON.parse(message.data);
         if (m.data && m.data.changes) {
-          const changes = m.data.changes
-          console.log('----', changes);
+          const changes = m.data.changes;
+          console.log('Changes:', changes);
           const changedDoc = applyChanges(doc, changes);
           setDoc(changedDoc);
-          if (changedDoc.textContent) {
-            console.log('merged text', changedDoc.textContent.toString());
-            settextContent(changedDoc.textContent.toString());
-          }
+          settextContent(changedDoc.textContent.toString());
         }
       }
     };
@@ -94,8 +87,10 @@ const AMEditor = (props: any) => {
         value={textContent} 
       />
       <div><button onClick={handleShowHistory}>Automerge History</button></div>
+      <div>{ history.map(h1 => h1.map(h2 => <div>{h2}</div>)) }</div>
     </div>
   );
+
 };
 
 export default AMEditor;

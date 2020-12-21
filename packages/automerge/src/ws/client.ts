@@ -95,11 +95,22 @@ export default class AutomergeClient {
     }
   }
 
+  public applyChanges(id, changes) {
+    if (!(id in this.docs)) {
+      return false;
+    }
+    this.docs[id] = Automerge.applyChanges(this.docs[id], changes);
+    if (this.docSet) {
+      this.docSet.setDoc(id, this.docs[id]);
+    }
+    return true;
+  }
+
   public change(id, changer) {
     if (!(id in this.docs)) {
       return false;
     }
-    this.docs[id] = Automerge.change(this.docs[id], changer)
+    this.docs[id] = Automerge.change(this.docs[id], changer);
     if (this.docSet) {
       this.docSet.setDoc(id, this.docs[id]);
     }
@@ -110,12 +121,11 @@ export default class AutomergeClient {
     if (!(id in this.docs)) {
       return false;
     }
-    console.log(id, pos, remove, insert);
     this.docs[id] = Automerge.change(this.docs[id], (d: Doc) => {
-      if (insert) {
+      if (insert.length > 0) {
         d.textContent.insertAt(pos, insert);
       }
-      if (remove && remove > -1) {
+      if (remove > 0) {
         d.textContent.deleteAt(pos, remove);
       }
     });

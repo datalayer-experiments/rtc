@@ -1,16 +1,11 @@
 import Automerge, { Text } from "automerge";
-import { SimpleDiff } from '../utils/simpleDiff'
+import { SimpleDiff } from '../utils/simpleDiff';
 
 export type Doc = {
   docId: string;
   textContent: Text;
 }
 
-/*
- * This function is used as the way to initialize
- * the Automerge document. This function returns an
- * empty document.
- */
 export const initDocument = () => {
   return Automerge.init<Doc>();
 };
@@ -36,11 +31,11 @@ export const merge = (oldDoc: Doc, newDoc: Doc) => {
 
 export const applyInput = (doc: Doc, diff: SimpleDiff) => {
   return Automerge.change(doc, (d: Doc) => {
-    d.textContent.insertAt(diff.pos, diff.insert);
-    d.textContent.deleteAt(diff.pos, diff.remove);
+    d.textContent.insertAt(diff.index, diff.insert);
+    d.textContent.deleteAt(diff.index + 1, diff.remove);
   });
 };
 
 export const getHistory = (doc: Doc) => {
-  return Automerge.getHistory(doc).map(state => [state.change.message, state.snapshot.textContent])
+  return Automerge.getHistory(doc).map(state => [state.change.message, state.snapshot.textContent]);
 };
