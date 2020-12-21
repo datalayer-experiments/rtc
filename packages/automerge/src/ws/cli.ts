@@ -34,10 +34,17 @@ function subscribe(args) {
 
 function change(args) {
   const ret = client.change(args[0], doc => {
-    doc[args[1]] = args[2]
+    doc[args[1]] = args[2];
   })
   if (!ret) {
     console.error('CLI> Failed to change doc.')
+  }
+}
+
+function diff(args) {
+  const ret = client.diff(args[0], args[1], args[2], args[3]);
+  if (!ret) {
+    console.error('CLI> Failed to diff doc.')
   }
 }
 
@@ -55,6 +62,8 @@ function handleLine() {
       subscribe(args)
     } else if (['c', 'ch', 'change'].includes(cmd)) {
       change(args)
+    } else if (['d', 'diff'].includes(cmd)) {
+      diff(args)
     } else {
       console.error('CLI> Unknown command "' + cmd + '"')
     }

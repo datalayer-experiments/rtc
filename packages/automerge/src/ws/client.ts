@@ -1,4 +1,5 @@
 import Automerge, { DocSet } from 'automerge'
+import { Doc } from './server';
 
 // Returns true if all components of clock1 are less than or equal to those of clock2.
 // Returns false if there is at least one component in which clock1 is greater than clock2
@@ -87,7 +88,7 @@ export default class AutomergeClient {
     console.log('"CLIENT> Trying to subscribe to ' + JSON.stringify(ids))
     this.subscribeList = this.subscribeList.concat(ids).filter(unique)
     if (this.socket.readyState === 1) {
-      // OPEN
+      // Open.
       this.socket.send(
         JSON.stringify({ action: 'subscribe', ids: ids.filter(unique) }),
       )
@@ -99,6 +100,25 @@ export default class AutomergeClient {
       return false;
     }
     this.docs[id] = Automerge.change(this.docs[id], changer)
+    if (this.docSet) {
+      this.docSet.setDoc(id, this.docs[id]);
+    }
+    return true;
+  }
+
+  public diff(id, pos: number | null, remove: number | null, insert: string) {
+    if (!(id in this.docs)) {
+      return false;
+    }
+    console.log(id, pos, remove, insert);
+    this.docs[id] = Automerge.change(this.docs[id], (d: Doc) => {
+      if (insert) {
+        d.textContent.insertAt(pos, insert);
+      }
+      if (remove && remove > -1) {
+        d.textContent.deleteAt(pos, remove);
+      }
+    });
     if (this.docSet) {
       this.docSet.setDoc(id, this.docs[id]);
     }

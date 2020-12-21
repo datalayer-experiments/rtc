@@ -1,14 +1,10 @@
-import * as Automerge from "automerge";
-import { Text, FreezeObject } from "automerge";
-
+import Automerge, { Text } from "automerge";
 import { SimpleDiff } from '../utils/simpleDiff'
 
-type Doc = {
+export type Doc = {
   docId: string;
-  text: Automerge.Text;
+  textContent: Text;
 }
-// type Doc = FreezeObject< { text: Text; } >
-// type Doc = any
 
 /*
  * This function is used as the way to initialize
@@ -22,7 +18,7 @@ export const initDocument = () => {
 export const initDocumentText = (): Doc => {
   return Automerge.from({
     docId: '',
-    text: new Text()}
+    textContent: new Text()}
   );
 };
 
@@ -40,6 +36,11 @@ export const merge = (oldDoc: Doc, newDoc: Doc) => {
 
 export const applyInput = (doc: Doc, diff: SimpleDiff) => {
   return Automerge.change(doc, (d: Doc) => {
-    d.text.insertAt(diff.pos, diff.insert);
+    d.textContent.insertAt(diff.pos, diff.insert);
+    d.textContent.deleteAt(diff.pos, diff.remove);
   });
+};
+
+export const getHistory = (doc: Doc) => {
+  return Automerge.getHistory(doc).map(state => [state.change.message, state.snapshot.textContent])
 };

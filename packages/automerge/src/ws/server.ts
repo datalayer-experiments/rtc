@@ -1,5 +1,4 @@
-import Automerge, { DocSet } from 'automerge'
-import { log } from 'console'
+import Automerge, { DocSet, Text } from 'automerge'
 
 /*
 # Protocol
@@ -17,9 +16,9 @@ import { log } from 'console'
 
 */
 
-type Doc = {
+export type Doc = {
   docId: string;
-  text: Automerge.Text;
+  textContent: Text;
 }
 
 export class Document {
@@ -262,10 +261,10 @@ export default class AutomergeServer {
           // if falsy create new empty document
           return Automerge.change(Automerge.init<Doc>(), doc => {
             doc.docId = id;
-            doc.text = new Automerge.Text();
-            doc.text.insertAt(0, 'h', 'e', 'l', 'l', 'o')
-            doc.text.deleteAt(0)
-            doc.text.insertAt(0, 'H')
+            doc.textContent = new Automerge.Text();
+            doc.textContent.insertAt(0, 'h', 'e', 'l', 'l', 'o')
+            doc.textContent.deleteAt(0)
+            doc.textContent.insertAt(0, 'H')
           })
         }
         // if not falsy nor string we expect automerge document

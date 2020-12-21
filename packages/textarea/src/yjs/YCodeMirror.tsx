@@ -10,8 +10,8 @@ import 'codemirror/lib/codemirror.css';
 import 'codemirror/mode/python/python';
 
 const YCodeMirror = () => {
-  const ydoc = new Y.Doc()
 
+  const ydoc = new Y.Doc()
   const provider = new WebsocketProvider(
     'ws://localhost:1234', 
     'codemirror-demo',
@@ -41,10 +41,9 @@ const YCodeMirror = () => {
     }
   })
 */
-
   provider.connect();
 
-  return <div></div>
+  return  <h3>Y.js CodeMirror</h3>
 
 }
 

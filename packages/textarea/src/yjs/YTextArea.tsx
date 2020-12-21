@@ -22,9 +22,10 @@ const YTextArea = () => {
     binding = new YTextAreaBinding(ytext, textArea)
   });
   return <div className="App">
+      <h3>Y.js TextArea</h3>
       <textarea
         cols={80}
-        rows={40}
+        rows={5}
         onChange={textareaDidChange}
         ref={(input) => { textArea = input }}
       />

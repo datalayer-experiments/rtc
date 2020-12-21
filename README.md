@@ -16,7 +16,7 @@ yarn && \ # Install node modules.
   yarn textarea # Start the textarea example.
 ```
 
-This repository contains codes taken from various sources:
+This repository contains sources taken from various repositories:
 
 - https://github.com/yjs/yjs
 - https://github.com/yjs/y-websocket

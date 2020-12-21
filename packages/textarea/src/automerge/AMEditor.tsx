@@ -4,12 +4,14 @@ import {
   initDocument,
   applyChanges,
   getChanges,
-  applyInput
+  applyInput,
+  getHistory
 } from "./AMActions";
+import { Doc } from './AMActions';
 import simpleDiff from '../utils/simpleDiff'
 import ReconnectingWebSocket from './reconnecting-websocket'
 
-const ROOM_ID = 'myroom';
+const DOC_ID = 'reacttextarea';
 
 const ws = new ReconnectingWebSocket('ws://localhost:4400/automerge')
 
@@ -34,36 +36,34 @@ function change(docId, attr, value) {
   const ret = client.change(docId, doc => {
     doc[attr] = value
   })
-  console.log('----->>>', ret)
-  if (!ret) {
-    console.error('Failed to change doc.')
-  }
 }
 
 const AMEditor = (props: any) => {
 
-  const [text, setText] = useState('');
-  const [doc, setDoc] = useState(initDocument());
+  const [textContent, settextContent] = useState('');
+  const [doc, setDoc] = useState<Doc>(initDocument());
 
   const handleTextChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     event.preventDefault();
-    let diff = simpleDiff(doc.text.toString(), event.target.value)
+    let diff = simpleDiff(doc.textContent.toString(), event.target.value);
     const newDoc = applyInput(doc, diff);
     const changes = getChanges(doc, newDoc);
+    console.log('Diff', diff);
     console.log('Changes', changes);
-//    ws.send(JSON.stringify(changes));
-    change(ROOM_ID, 'text', 'helloooo');
-//    setDoc(newDoc);
-    setText(event.target.value);
+    const ret = client.diff(DOC_ID, diff.pos, diff.remove, diff.insert);
+    if (!ret) {
+      console.error('Failed to diff doc.')
+    }  
+    setDoc(newDoc);
+    settextContent(event.target.value);
   };
 
-  const handleGetText = () => {
-    console.log(text);
+  const handleShowHistory = () => {
+    getHistory(doc);
   };
 
   useEffect(() => {
-    subscribe(ROOM_ID);
-//    change(ROOM_ID, 'text', 'hello');
+    subscribe(DOC_ID);
   }, []);
 
   useEffect(() => {
@@ -75,9 +75,9 @@ const AMEditor = (props: any) => {
           console.log('----', changes);
           const changedDoc = applyChanges(doc, changes);
           setDoc(changedDoc);
-          if (changedDoc.text) {
-            console.log('merged text', changedDoc.text.toString());
-            setText(changedDoc.text.toString());
+          if (changedDoc.textContent) {
+            console.log('merged text', changedDoc.textContent.toString());
+            settextContent(changedDoc.textContent.toString());
           }
         }
       }
@@ -86,9 +86,14 @@ const AMEditor = (props: any) => {
 
   return (
     <div>
-      <div>Automerge Text Area</div>
-      <textarea onChange={handleTextChange} value={text} />
-      <button onClick={handleGetText}>Get Text</button>
+      <h3>Automerge textContent</h3>
+      <textarea 
+        cols={80}
+        rows={5}
+        onChange={handleTextChange} 
+        value={textContent} 
+      />
+      <div><button onClick={handleShowHistory}>Automerge History</button></div>
     </div>
   );
 };
