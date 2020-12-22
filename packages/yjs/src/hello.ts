@@ -5,7 +5,7 @@ const doc = new Y.Doc()
 // Array Types.
 const yarray = doc.getArray('array-1')
 yarray.observe(event => {
-  console.log('yarray was modified')
+  console.log('yarray was modified', event);
 })
 // every time a local or remote client modifies yarray, the observer is called
 yarray.insert(0, ['val']) // => "yarray was modified"

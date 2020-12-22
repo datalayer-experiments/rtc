@@ -34,10 +34,10 @@ const YCodeMirror = () => {
   connectBtn.addEventListener('click', () => {
     if (provider.shouldConnect) {
       provider.disconnect()
-      connectBtn.textContent = 'Connect'
+      connectBtn.textArea = 'Connect'
     } else {
       provider.connect()
-      connectBtn.textContent = 'Disconnect'
+      connectBtn.textArea = 'Disconnect'
     }
   })
 */

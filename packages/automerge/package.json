@@ -22,8 +22,8 @@
     "hello": "ts-node src/index.ts",
     "test": "jest",
     "test:automerge": "jest src/automerge.test.ts",
-    "test:automerge:changes": "jest src/automerge-changes.test.ts",
-    "test:automerge:ts": "jest src/automerge-ts.test.ts",
+    "test:automerge:changes": "jest src/AutomergeChanges.test.ts",
+    "test:automerge:ts": "jest src/AutomergeTypescript.test.ts",
     "server:ws:start": "ts-node src/ws/server-start.ts",
     "server:ws:wait": "wait-on tcp:4400",
     "client:ws:cli": "ts-node src/ws/cli.ts"

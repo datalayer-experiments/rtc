@@ -2,20 +2,20 @@ import React, { useEffect } from 'react';
 
 import * as Y from 'yjs'
 import { WebsocketProvider } from 'y-websocket'
-import YTextAreaBinding from './YTextAreaBinding'
+import YBinder from './YBinder'
 
 const YTextArea = () => {
-  const ydoc = new Y.Doc()
+  const doc = new Y.Doc()
   const provider = new WebsocketProvider(
-    'ws://localhost:1234', 
+    'ws://localhost:1234',
     'yjs-textarea',
-    ydoc
+    doc
   )
-  const ytext = ydoc.getText('textarea-content')
+  const text = doc.getText('textarea-content');
   let textArea: HTMLTextAreaElement;
-  let binding: any;
+  let binder: YBinder;
   useEffect(() => {
-    binding = new YTextAreaBinding(ytext, textArea)
+    binder = new YBinder(text, textArea)
   });
   return <div className="App">
       <h3>Y.js TextArea</h3>
