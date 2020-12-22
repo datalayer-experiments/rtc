@@ -134,7 +134,6 @@ class AutomergeWsClient {
   }
 
   private _onOpen() {
-    console.log('"CLIENT> Open')
     const send = data => {
       this.socket.send(JSON.stringify({ action: 'automerge', data }))
     }
@@ -153,6 +152,7 @@ class AutomergeWsClient {
         this.save(doSave(this.docs))
       }
       this.onChange(docId, this.docs[docId])
+      console.log("CLIENT>", doc);
     })
     const autocon = (this.autocon = new Automerge.Connection(docSet, send))
     autocon.open()
@@ -174,7 +174,6 @@ class AutomergeWsClient {
   }
 
   private _onClose() {
-    console.log('"CLIENT> Close')
     if (this.autocon) {
       this.autocon.close()
     }

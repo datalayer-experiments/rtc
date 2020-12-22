@@ -98,8 +98,6 @@ class AutomergeWsServer {
 
   public handleSocket(ws, req) {
 
-    console.log('SERVER> Open')
-
     const docSet = new DocSet()
     docSet.registerHandler((id, doc) => console.log('SERVER> Handler:', id, doc))
 
@@ -189,7 +187,6 @@ class AutomergeWsServer {
     };
 
     const automergeMessage = data => {
-      console.log('SERVER> Data:', data)
       if (subscribedDocuments.some(doc => doc.id === data.docId)) {
         autocon.receiveMsg(data)
       } else {
@@ -230,7 +227,6 @@ class AutomergeWsServer {
     autocon.open();
 
     ws.on('close', () => {
-      console.log('SERVER> Close')
       autocon.close()
       subscribedDocuments.forEach(doc => doc.removeFromSet(docSet))
     });
@@ -245,7 +241,6 @@ class AutomergeWsServer {
     if (this.docs[id]) return this.docs[id]
     this.docs[id] = Promise.resolve(this.loadDocument(id))
       .then(doc => {
-        console.log('---------', doc)
         if (doc === false) return false // 404
         // ok
         if (typeof doc === 'string') {
