@@ -1,4 +1,4 @@
-import AutomergeServer from './AutomergeWsServer';
+import AutomergeWsServer from './AutomergeWsServer';
 
 const http = require('http')
 const WebSocket = require('ws')
@@ -18,7 +18,7 @@ function fname(id) {
   return path.join(dir, id + '.json')
 }
 
-const automergeServer = new AutomergeServer({
+const automergeServer = new AutomergeWsServer({
   loadDocument: async id => {
     if (/^[a-z]+$/.exec(id)) {
       try {

@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 
-import AutomergeWsClient from "@datalayer-rtc/automerge/lib/ws/AutomergeWsClient";
+import AutomergeWsServer from "@datalayer-rtc/automerge/lib/ws/AutomergeWsClient";
 
 import {
   Doc,
@@ -9,8 +9,10 @@ import {
   getChanges,
   applyInput,
   getHistory
-} from "./AutomergeUtils";
+} from "./AutomergeActions";
+
 import simpleDiff from '../utils/simpleDiff'
+
 // import ReconnectingWebSocket from './ReconnectingWebsocket';
 
 const DOC_ID = 'reacttextarea';
@@ -22,6 +24,13 @@ ws.addEventListener('close', () => {
 */
 const ws = new WebSocket('ws://localhost:4400/automerge');
 
+const client = new AutomergeWsServer({
+  socket: ws,
+  savedData: null,
+  save: null,
+  onChange: null
+});
+
 const AutomergeTextArea = (props: any) => {
 
   let textArea: HTMLTextAreaElement;
@@ -29,14 +38,6 @@ const AutomergeTextArea = (props: any) => {
   const [doc, setDoc] = useState<Doc>(initDocument());
   const [history, setHistory] = useState(new Array(new Array()));
 
-  const client = new AutomergeWsClient({
-    socket: ws,
-    savedData: null,
-    save: null,
-    onChange: null,
-//    onMessage: (message: any) => {}
-  });
-  
   const handleTextChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     event.preventDefault();
     let diff = simpleDiff(doc.textArea.toString(), event.target.value);
@@ -46,12 +47,12 @@ const AutomergeTextArea = (props: any) => {
     const ret = client.applyChanges(DOC_ID, changes);
     if (!ret) {
       console.error('Failed to apply changes to the doc.')
-    }
-  }
+    };
+  };
 
   const handleShowHistory = () => {
     setHistory(getHistory(doc));
-  }
+  };
 
   useEffect(() => {
     client.subscribe(DOC_ID);

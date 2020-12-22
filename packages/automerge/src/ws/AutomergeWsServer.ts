@@ -73,7 +73,7 @@ export class Document {
 
 }
 
-export default class AutomergeServer {
+class AutomergeWsServer {
   private docs = null
   private loadDocument = null
   private saveDocument = null
@@ -264,13 +264,15 @@ export default class AutomergeServer {
         }
         // if not falsy nor string we expect automerge document
         // created via Automerge.init()
-        return doc
+        return doc;
       })
       .then(doc => {
-        if (doc === false) return false // 404
-        return new Document(id, this.onChange).set(doc)
+        if (doc === false) return false; // 404
+        return new Document(id, this.onChange).set(doc);
       })
-    return this.docs[id]
+    return this.docs[id];
   }
 
 }
+
+export default AutomergeWsServer;

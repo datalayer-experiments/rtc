@@ -57,7 +57,7 @@ function doLoad(string) {
 
 // AutomergeClient
 
-export default class AutomergeClient {
+class AutomergeWsClient {
   private socket = null;
   private save = null;
   private docs = null;
@@ -133,8 +133,6 @@ export default class AutomergeClient {
     return true;
   }
 
-  // --- Privates
-
   private _onOpen() {
     console.log('"CLIENT> Open')
     const send = data => {
@@ -185,3 +183,5 @@ export default class AutomergeClient {
   }
 
 }
+
+export default AutomergeWsClient;

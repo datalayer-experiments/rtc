@@ -1,4 +1,4 @@
-import AutomergeClient from './AutomergeWsClient';
+import AutomergeWsClient from './AutomergeWsClient';
 
 const fs = require('fs');
 const path = require('path');
@@ -13,7 +13,7 @@ socket.addEventListener('close', () => {
 
 const storeFile = path.join(__dirname, 'client-docs.json');
 
-const client = new AutomergeClient({
+const client = new AutomergeWsClient({
   socket,
   savedData: (() => {
     try {
@@ -48,12 +48,11 @@ function diff(args) {
   }
 }
 
-// CLI
-
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 })
+
 function handleLine() {
   rl.question('automerge-cli> ', line => {
     const [cmd, ...args] = line.trim().split(/ +/);
@@ -61,13 +60,13 @@ function handleLine() {
     if (cmd === 'subscribe' || cmd === 's') {
       subscribe(args);
     } else if (['c', 'ch', 'change'].includes(cmd)) {
-      change(args)
+      change(args);
     } else if (['d', 'diff'].includes(cmd)) {
-      diff(args)
+      diff(args);
     } else {
       console.error('CLI> Unknown command "' + cmd + '"')
     }
-    handleLine()
+    handleLine();
   })
 }
 

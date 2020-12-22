@@ -4,13 +4,13 @@ import ReactDOM from 'react-dom';
 import YTextArea from './yjs/YTextArea';
 import YCodeMirror from './yjs/YCodeMirror';
 
-import AMEditor from './automerge/AMEditor';
+import AutomergeTextArea from './automerge/AutomergeTextArea';
 
 import './index.css';
 
 ReactDOM.render(
   <div>
-    <AMEditor />
+    <AutomergeTextArea />
     <YTextArea />
     <YCodeMirror />
   </div>
