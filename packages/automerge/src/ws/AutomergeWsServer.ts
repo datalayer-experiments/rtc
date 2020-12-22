@@ -19,7 +19,7 @@ import Automerge, { DocSet, Text } from 'automerge'
 
 export type Doc = {
   docId: string;
-  textContent: Text;
+  textArea: Text;
 };
 
 export class Document {
@@ -256,10 +256,10 @@ export default class AutomergeServer {
           // if falsy create new empty document
           return Automerge.change(Automerge.init<Doc>(), doc => {
             doc.docId = id;
-            doc.textContent = new Automerge.Text();
-            doc.textContent.insertAt(0, 'h', 'e', 'l', 'l', 'o')
-            doc.textContent.deleteAt(0)
-            doc.textContent.insertAt(0, 'H')
+            doc.textArea = new Automerge.Text();
+            doc.textArea.insertAt(0, 'h', 'e', 'l', 'l', 'o')
+            doc.textArea.deleteAt(0)
+            doc.textArea.insertAt(0, 'H')
           })
         }
         // if not falsy nor string we expect automerge document

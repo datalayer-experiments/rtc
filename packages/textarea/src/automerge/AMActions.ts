@@ -3,7 +3,7 @@ import { SimpleDiff } from '../utils/simpleDiff';
 
 export type Doc = {
   docId: string;
-  textContent: Text;
+  textArea: Text;
 }
 
 export const initDocument = () => {
@@ -13,7 +13,7 @@ export const initDocument = () => {
 export const initDocumentText = (): Doc => {
   return Automerge.from({
     docId: '',
-    textContent: new Text()}
+    textArea: new Text()}
   );
 };
 
@@ -31,11 +31,11 @@ export const merge = (oldDoc: Doc, newDoc: Doc) => {
 
 export const applyInput = (doc: Doc, diff: SimpleDiff) => {
   return Automerge.change(doc, (d: Doc) => {
-    d.textContent.insertAt(diff.index, diff.insert);
-    d.textContent.deleteAt(diff.index + 1, diff.remove);
+    d.textArea.insertAt(diff.index, diff.insert);
+    d.textArea.deleteAt(diff.index + 1, diff.remove);
   });
 };
 
 export const getHistory = (doc: Doc) => {
-  return Automerge.getHistory(doc).map(state => [state.change.message, state.snapshot.textContent]);
+  return Automerge.getHistory(doc).map(state => [state.change.message, state.snapshot.textArea]);
 };

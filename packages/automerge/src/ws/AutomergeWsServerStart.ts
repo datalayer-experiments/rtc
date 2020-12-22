@@ -1,4 +1,4 @@
-import AutomergeServer from './server';
+import AutomergeServer from './AutomergeWsServer';
 
 const http = require('http')
 const WebSocket = require('ws')

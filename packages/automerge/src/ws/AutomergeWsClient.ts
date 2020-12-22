@@ -1,5 +1,5 @@
 import Automerge, { DocSet } from 'automerge'
-import { Doc } from './server';
+import { Doc } from './AutomergeWsServer';
 
 // Returns true if all components of clock1 are less than or equal to those of clock2.
 // Returns false if there is at least one component in which clock1 is greater than clock2
@@ -81,8 +81,6 @@ export default class AutomergeClient {
     socket.addEventListener('connecting', evt => console.log("CLIENT> Connecting", evt))    
   }
 
-  // --- Publics
-
   public subscribe(ids) {
     if (ids.length <= 0) return
     console.log('"CLIENT> Trying to subscribe to ' + JSON.stringify(ids))
@@ -123,10 +121,10 @@ export default class AutomergeClient {
     }
     this.docs[id] = Automerge.change(this.docs[id], (d: Doc) => {
       if (insert.length > 0) {
-        d.textContent.insertAt(pos, insert);
+        d.textArea.insertAt(pos, insert);
       }
       if (remove > 0) {
-        d.textContent.deleteAt(pos, remove);
+        d.textArea.deleteAt(pos, remove);
       }
     });
     if (this.docSet) {

@@ -1,4 +1,4 @@
-import AutomergeClient from './client';
+import AutomergeClient from './AutomergeWsClient';
 
 const fs = require('fs');
 const path = require('path');
