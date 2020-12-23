@@ -4,11 +4,12 @@ import * as Y from 'yjs'
 import { WebsocketProvider } from 'y-websocket'
 import YBinder from './YBinder'
 
-const YTextArea = () => {
-  const doc = new Y.Doc()
+const YTextArea = (props: {docId: string}) => {
+  const docId = props.docId;
+  const doc = new Y.Doc();
   const provider = new WebsocketProvider(
     'ws://localhost:1234',
-    'yjs-textarea',
+    docId,
     doc
   )
   const text = doc.getText('textarea-content');
@@ -18,7 +19,7 @@ const YTextArea = () => {
     binder = new YBinder(textArea, text)
   });
   return <div className="App">
-      <h3>Y.js TextArea</h3>
+      <h3>Y.js TextArea (id: {docId})</h3>
       <textarea
         cols={80}
         rows={5}

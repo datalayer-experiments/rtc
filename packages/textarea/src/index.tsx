@@ -12,7 +12,8 @@ ReactDOM.render(
   <div>
     <AutomergeTextArea docId="first" />
     <AutomergeTextArea docId="second" />
-    <YTextArea />
+    <YTextArea docId="first" />
+    <YTextArea docId="second" />
     <YCodeMirror />
   </div>
   ,

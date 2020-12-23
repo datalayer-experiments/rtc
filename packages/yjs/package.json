@@ -20,8 +20,7 @@
     "prepublishOnly": "npm run build",
     "watch": "tsc -w --listEmittedFiles",
     "start": "fkill -s :8888 && ts-node src/server/start.ts",
-    "server:ws:start:1": "fkill -s :1234 && YPERSISTENCE=./data-server node src/ws/server-1/server.js",
-    "server:ws:start:2": "fkill -s :1234 && PRODUCTION=1 node src/ws/server-2/server.js",
+    "server:ws:start": "fkill -s :1234 && YPERSISTENCE=./data-server node src/ws/server.js",
     "server:ws:wait": "wait-on tcp:1234",
     "server:webrtc:start:1": "fkill -s :4444 && node src/webrtc/server-1/server.js",
     "server:webrtc:start:2": "fkill -s :4444 && node src/webrtc/server-2/index.js",
@@ -29,7 +28,7 @@
     "test": "jest",
     "test:providers": "jest src/providers.test.ts",
     "hello": "ts-node src/hello.ts",
-    "providers": "npm-run-all --parallel --race server:ws:start:1 server:webrtc:start:1 providers:wait-start",
+    "providers": "npm-run-all --parallel --race server:ws:start server:webrtc:start:1 providers:wait-start",
     "providers:wait-start": "npm-run-all server:ws:wait server:webrtc:wait test:providers"
   },
   "dependencies": {

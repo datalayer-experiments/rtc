@@ -23,10 +23,10 @@
     "test": "jest",
     "test:automerge": "jest src/Automerge.test.ts",
     "test:automerge:changes": "jest src/AutomergeChanges.test.ts",
-    "test:automerge:ts": "jest src/AutomergeTypescript.test.ts",
-    "server:ws:start": "ts-node src/ws/AutomergeWsServerStart.ts",
+    "test:automerge:typescript": "jest src/AutomergeTypescript.test.ts",
+    "server:ws:start:1": "ts-node src/ws-1/AutomergeWsServerStart.ts",
     "server:ws:wait": "wait-on tcp:4400",
-    "client:ws:cli": "ts-node src/ws/AutomergeWsCli.ts"
+    "client:ws:cli": "ts-node src/ws-1/AutomergeWsCli.ts"
   },
   "dependencies": {
     "automerge": "file:./../../externals/automerge",
