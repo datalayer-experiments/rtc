@@ -692,7 +692,7 @@ describe('TypeScript support', () => {
       afterDoc = Automerge.change(beforeDoc, doc => (doc.birds = ['swallows']))
       changes = Automerge.getChanges(beforeDoc, afterDoc)
       watchDoc = new Automerge.WatchableDoc(beforeDoc)
-      callback = _doc => {}
+      callback = _doc => {console.log('----', _doc)}
       watchDoc.registerHandler(callback)
     })
 

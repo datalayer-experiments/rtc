@@ -1,14 +1,9 @@
-#!/usr/bin/env node
+import WebSocket from 'ws'
+import setupWSConnection from './utils'
 
-/**
- * @type {any}
- */
-const WebSocket = require('ws')
 const http = require('http')
 
 const wss = new WebSocket.Server({ noServer: true })
-
-const setupWSConnection = require('./utils.js').setupWSConnection
 
 const port = process.env.PORT || 1234
 

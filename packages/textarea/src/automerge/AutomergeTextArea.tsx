@@ -5,7 +5,7 @@ import React, {
   useRef
 } from "react";
 
-import AutomergeWsClient from "@datalayer-rtc/automerge/lib/ws/AutomergeWsClient";
+import AutomergeWsClient from "@datalayer-rtc/automerge/lib/ws-1/AutomergeWsClient";
 
 import {
   Doc,

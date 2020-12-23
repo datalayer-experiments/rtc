@@ -10,64 +10,14 @@ const map = require('lib0/dist/map.cjs')
 
 const debounce = require('lodash.debounce')
 
-const callbackHandler = require('./callback.js').callbackHandler
-const isCallbackSet = require('./callback.js').isCallbackSet
-
-const CALLBACK_DEBOUNCE_WAIT = parseInt(process.env.CALLBACK_DEBOUNCE_WAIT) || 2000
-const CALLBACK_DEBOUNCE_MAXWAIT = parseInt(process.env.CALLBACK_DEBOUNCE_MAXWAIT) || 10000
-
 const wsReadyStateConnecting = 0
 const wsReadyStateOpen = 1
-const wsReadyStateClosing = 2 // eslint-disable-line
-const wsReadyStateClosed = 3 // eslint-disable-line
-
-// disable gc when using snapshots!
-const gcEnabled = process.env.GC !== 'false' && process.env.GC !== '0'
-const persistenceDir = process.env.YPERSISTENCE
-
-/**
- * @type {{bindState: function(string,WSSharedDoc):void, writeState:function(string,WSSharedDoc):Promise<any>, provider: any}|null}
- */
-let persistence = null
-
-if (typeof persistenceDir === 'string') {
-  console.info('Persisting documents to "' + persistenceDir + '"')
-  // @ts-ignore
-  const LeveldbPersistence = require('y-leveldb').LeveldbPersistence
-  const ldb = new LeveldbPersistence(persistenceDir)
-  persistence = {
-    provider: ldb,
-    bindState: async (docName, ydoc) => {
-      const persistedYdoc = await ldb.getYDoc(docName)
-      const newUpdates = Y.encodeStateAsUpdate(ydoc)
-      ldb.storeUpdate(docName, newUpdates)
-      Y.applyUpdate(ydoc, Y.encodeStateAsUpdate(persistedYdoc))
-      ydoc.on('update', update => {
-        ldb.storeUpdate(docName, update)
-      })
-    },
-    writeState: async (docName, ydoc) => {}
-  }
-}
-
-/**
- * @param {{bindState: function(string,WSSharedDoc):void,
- * writeState:function(string,WSSharedDoc):Promise<any>,provider:any}|null} persistence_
- */
-exports.setPersistence = persistence_ => {
-  persistence = persistence_
-}
-
-/**
- * @return {null|{bindState: function(string,WSSharedDoc):void,
-  * writeState:function(string,WSSharedDoc):Promise<any>}|null} used persistence layer
-  */
-exports.getPersistence = () => persistence
 
 /**
  * @type {Map<string,WSSharedDoc>}
  */
 const docs = new Map()
+
 // exporting docs so that others can use it
 exports.docs = docs
 
