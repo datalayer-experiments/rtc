@@ -15,7 +15,7 @@ const YTextArea = () => {
   let textArea: HTMLTextAreaElement;
   let binder: YBinder;
   useEffect(() => {
-    binder = new YBinder(text, textArea)
+    binder = new YBinder(textArea, text)
   });
   return <div className="App">
       <h3>Y.js TextArea</h3>

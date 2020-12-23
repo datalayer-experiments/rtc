@@ -2,13 +2,14 @@ import AutomergeWsClient from './AutomergeWsClient';
 
 const fs = require('fs');
 const path = require('path');
-const WebSocket = require('./ReconnectingWebsocket');
 const readline = require('readline');
+
+const WebSocket = require('./ReconnectingWebsocket');
 
 const socket = new WebSocket('http://localhost:4400/automerge');
 
 socket.addEventListener('close', () => {
-  if (socket._shouldReconnect) socket._connect()
+  if (socket._shouldReconnect) socket._connect();
 })
 
 const storeFile = path.join(__dirname, 'client-docs.json');
@@ -23,7 +24,8 @@ const client = new AutomergeWsClient({
     }
   })(),
   save: data => fs.writeFile(storeFile, data, 'utf8', () => {}),
-  onChange: (() => {})
+  onChange: (() => {}),
+  onMessage: ((message: any) => {}),
 })
 
 // Actions
@@ -64,7 +66,7 @@ function handleLine() {
     } else if (['d', 'diff'].includes(cmd)) {
       diff(args);
     } else {
-      console.error('CLI> Unknown command "' + cmd + '"')
+      console.error('CLI> Unknown command "' + cmd + '"');
     }
     handleLine();
   })

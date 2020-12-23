@@ -187,12 +187,13 @@ class AutomergeWsServer {
     };
 
     const automergeMessage = data => {
+      console.log('SERVER> Data:', data);
       if (subscribedDocuments.some(doc => doc.id === data.docId)) {
-        autocon.receiveMsg(data)
+        autocon.receiveMsg(data);
       } else {
         send('error', {
           message: 'Sending changes to doc which you are not subscribed to',
-        })
+        });
       }
     };
 
@@ -241,6 +242,7 @@ class AutomergeWsServer {
     if (this.docs[id]) return this.docs[id]
     this.docs[id] = Promise.resolve(this.loadDocument(id))
       .then(doc => {
+        console.log('SERVER>', doc)
         if (doc === false) return false // 404
         // ok
         if (typeof doc === 'string') {

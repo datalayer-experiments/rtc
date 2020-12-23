@@ -1,13 +1,14 @@
 import Automerge, { DocSet } from 'automerge'
 import { Doc } from './AutomergeWsServer';
 
-// Returns true if all components of clock1 are less than or equal to those of clock2.
-// Returns false if there is at least one component in which clock1 is greater than clock2
-// (that is, either clock1 is overall greater than clock2, or the clocks are incomparable).
+/*
+Returns true if all components of clock1 are less than or equal to those of clock2.
+Returns false if there is at least one component in which clock1 is greater than clock2
+(that is, either clock1 is overall greater than clock2, or the clocks are incomparable).
+*/
 
 // https://github.com/automerge/automerge/issues/117
 // https://github.com/automerge/automerge/issues/117#issuecomment-690951978
-
 /*
 function lessOrEqual(doc1, doc2) {
   const clock1 = doc1._state.getIn(['opSet', 'clock'])
@@ -29,30 +30,30 @@ function lessOrEqual(doc1, doc2) {
     .concat(clock2.keySeq())
     .reduce(
       (result, key) => result && clock1.get(key, 0) <= clock2.get(key, 0),
-      true,
-    )
+      true
+    );
 }
 
 function unique(el, i, list) {
-  return list.indexOf(el) === i
+  return list.indexOf(el) === i;
 }
 
 function doSave(docs) {
   const ret = {}
   for (const [k, v] of Object.entries(docs)) {
-    ret[k] = Automerge.save(v)
+    ret[k] = Automerge.save(v);
   }
-  return JSON.stringify(ret)
+  return JSON.stringify(ret);
 }
 
 function doLoad(string) {
-  if (!string) return {}
-  const docs = JSON.parse(string)
-  const ret = {}
+  if (!string) return {};
+  const docs = JSON.parse(string);
+  const ret = {};
   for (const [k, v] of Object.entries(docs)) {
-    ret[k] = Automerge.load(v as any)
+    ret[k] = Automerge.load(v as any);
   }
-  return ret
+  return ret;
 }
 
 // AutomergeClient
@@ -62,17 +63,19 @@ class AutomergeWsClient {
   private save = null;
   private docs = null;
   private onChange = null;
+  private onMessage = null;
   private subscribeList = null;
   private autocon = null;
   private docSet = null;
 
-  public constructor({socket, save, savedData, onChange} ) {
+  public constructor({socket, save, savedData, onChange, onMessage} ) {
     if (!socket)
       throw new Error('You have to specify websocket as socket param')
     this.socket = socket
     this.save = save
     this.docs = doLoad(savedData)
     this.onChange = onChange || (() => {})
+    this.onMessage = onMessage || ((message: any) => {})
     this.subscribeList = []
     socket.addEventListener('message', this._onMessage.bind(this))
     socket.addEventListener('open', this._onOpen.bind(this))
@@ -82,18 +85,19 @@ class AutomergeWsClient {
   }
 
   public subscribe(ids) {
-    if (ids.length <= 0) return
-    console.log('"CLIENT> Trying to subscribe to ' + JSON.stringify(ids))
-    this.subscribeList = this.subscribeList.concat(ids).filter(unique)
+    console.log('CLIENT> Trying to subscribe to ' + JSON.stringify(ids));
+        if (ids.length <= 0) return;
+    this.subscribeList = this.subscribeList.concat(ids).filter(unique);
     if (this.socket.readyState === 1) {
       // Open.
       this.socket.send(
-        JSON.stringify({ action: 'subscribe', ids: ids.filter(unique) }),
-      )
+        JSON.stringify({ action: 'subscribe', ids: ids.filter(unique) })
+      );
     }
   }
 
   public applyChanges(id, changes) {
+    console.log('CLIENT> apply changes', id, changes);
     if (!(id in this.docs)) {
       return false;
     }
@@ -134,34 +138,35 @@ class AutomergeWsClient {
   }
 
   private _onOpen() {
-    const send = data => {
-      this.socket.send(JSON.stringify({ action: 'automerge', data }))
-    }
     const docSet = (this.docSet = new DocSet());
     docSet.registerHandler((docId, doc) => {
       if (!this.docs[docId] || lessOrEqual(this.docs[docId], doc)) {
         // local changes are reflected in new doc
-        this.docs[docId] = doc
+        this.docs[docId] = doc;
       } else {
-        // local changes are NOT reflected in new doc
-        const merged = Automerge.merge(this.docs[docId], doc)
-        setTimeout(() => docSet.setDoc(docId, merged), 0)
+        // local changes are NOT reflected in new doc.
+        const merged = Automerge.merge(this.docs[docId], doc);
+        setTimeout(() => docSet.setDoc(docId, merged), 0);
       }
-      this.subscribeList = this.subscribeList.filter(el => el !== docId)
+      this.subscribeList = this.subscribeList.filter(el => el !== docId);
       if (this.save) {
-        this.save(doSave(this.docs))
+        this.save(doSave(this.docs));
       }
-      this.onChange(docId, this.docs[docId])
-      console.log("CLIENT>", doc);
-    })
-    const autocon = (this.autocon = new Automerge.Connection(docSet, send))
-    autocon.open()
-    this.subscribe(Object.keys(this.docs).concat(this.subscribeList))
+      console.log("CLIENT> document", this.docs[docId]);
+      this.onChange(docId, this.docs[docId]);
+    });
+    const send = data => {
+      this.socket.send(JSON.stringify({ action: 'automerge', data }));
+    }
+    this.autocon = new Automerge.Connection(docSet, send);
+    this.autocon.open();
+    this.subscribe(Object.keys(this.docs).concat(this.subscribeList));
   }
 
   private _onMessage(msg) {
     const frame = JSON.parse(msg.data)
     console.log('"CLIENT> Message', frame)
+    this.onMessage(frame);
     if (frame.action === 'automerge') {
       this.autocon.receiveMsg(frame.data)
     } else if (frame.action === 'error') {

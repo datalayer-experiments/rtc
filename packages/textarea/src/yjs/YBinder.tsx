@@ -1,4 +1,5 @@
 import { Text } from 'yjs'
+
 import { createMutex } from '../utils/mutex'
 import simpleDiff from '../utils/simpleDiff'
 
@@ -9,7 +10,7 @@ class YBinder {
   protected textArea: HTMLTextAreaElement;
   protected mutex: any;
 
-  public constructor (text: Text, textArea: HTMLTextAreaElement) {
+  public constructor (textArea: HTMLTextAreaElement, text: Text) {
     this.text = text;
     this.textArea = textArea;
     this.mutex = createMutex()
