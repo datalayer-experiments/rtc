@@ -4,7 +4,7 @@
 import * as Y from 'yjs';
 
 // import { WebsocketProvider } from 'y-websocket';
-import { WebsocketProvider } from './ws/y-websocket.js';
+import { WebsocketProvider } from './ws-min/y-websocket';
 import { WebrtcProvider } from 'y-webrtc';
 import { IndexeddbPersistence } from 'y-indexeddb';
 

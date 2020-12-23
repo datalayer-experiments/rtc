@@ -140,10 +140,6 @@ const setupWS = provider => {
   }
 }
 
-/**
- * @param {WebsocketProvider} provider
- * @param {ArrayBuffer} buf
- */
 const broadcastMessage = (provider, buf) => {
   if (provider.wsconnected) {
     // @ts-ignore We know that wsconnected = true

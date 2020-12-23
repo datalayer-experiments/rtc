@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 
 import * as Y from 'yjs'
-import { WebsocketProvider } from 'y-websocket'
+import { WebsocketProvider } from '@datalayer-rtc/yjs/lib/ws-min/y-websocket'
+
 import YBinder from './YBinder'
 
 const YTextArea = (props: {docId: string}) => {

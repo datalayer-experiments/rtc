@@ -10,7 +10,7 @@
     "serve": "serve dist -p 3002"
   },
   "dependencies": {
-    "@datalayer-rtc/automerge": "0.1.0",
+    "@datalayer-rtc/yjs": "0.1.0",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "codemirror": "5.58.3",
