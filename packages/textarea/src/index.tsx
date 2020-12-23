@@ -10,7 +10,8 @@ import './index.css';
 
 ReactDOM.render(
   <div>
-    <AutomergeTextArea />
+    <AutomergeTextArea docId="first" />
+    <AutomergeTextArea docId="second" />
     <YTextArea />
     <YCodeMirror />
   </div>

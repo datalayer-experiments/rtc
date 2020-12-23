@@ -152,8 +152,8 @@ class AutomergeWsClient {
       if (this.save) {
         this.save(doSave(this.docs));
       }
-      console.log("CLIENT> document", this.docs[docId]);
-      this.onChange(docId, this.docs[docId]);
+      console.log("CLIENT> document", docSet.getDoc(docId));
+      this.onChange(docId, docSet.getDoc(docId));
     });
     const send = data => {
       this.socket.send(JSON.stringify({ action: 'automerge', data }));

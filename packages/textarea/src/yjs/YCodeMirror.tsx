@@ -1,6 +1,7 @@
 import React from 'react';
 
 import * as Y from 'yjs'
+
 import { WebsocketProvider } from 'y-websocket'
 import { CodemirrorBinding } from 'y-codemirror'
 
@@ -21,14 +22,14 @@ const YCodeMirror = () => {
 
   const editorContainer = document.createElement('div')
   editorContainer.setAttribute('id', 'editor')
-  document.body.append(editorContainer, null)
+  document.body.append(editorContainer)
 
   const editor = CodeMirror(editorContainer, {
     mode: 'javascript',
     lineNumbers: true
-  })
+  });
   
-  const binding = new CodemirrorBinding(yText, editor, provider.awareness)
+  const binding = new CodemirrorBinding(yText, editor, provider.awareness);
 /*
   const connectBtn = (document.getElementById('y-connect-btn'))
   connectBtn.addEventListener('click', () => {
@@ -43,7 +44,7 @@ const YCodeMirror = () => {
 */
   provider.connect();
 
-  return  <h3>Y.js CodeMirror</h3>
+  return <h3>Y.js CodeMirror</h3>
 
 }
 

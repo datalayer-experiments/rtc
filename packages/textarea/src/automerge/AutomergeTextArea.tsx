@@ -1,5 +1,6 @@
 import React, { 
   ChangeEvent, 
+  useEffect,
   useState,
   useRef
 } from "react";
@@ -16,42 +17,42 @@ import {
 } from "./AutomergeActions";
 
 import simpleDiff from '../utils/simpleDiff'
-
-// import ReconnectingWebSocket from './../utils/ReconnectingWebsocket';
-
-const DOC_ID = 'reacttextarea';
 /*
+import ReconnectingWebSocket from './../utils/ReconnectingWebsocket';
 const ws = new ReconnectingWebSocket('ws://localhost:4400/automerge')
 ws.addEventListener('close', () => {
   if (ws._shouldReconnect) ws._connect()
 })
 */
-const ws = new WebSocket('ws://localhost:4400/automerge');
+const AutomergeTextArea = (props: {docId: string}) => {
 
-let wsClient: AutomergeWsClient;
-
-const AutomergeTextArea = (props: any) => {
+  const docId = props.docId;
 
   const [doc, setDoc] = useState<Doc>(initDocument());
-  const [history, setHistory] = useState(new Array(new Array()));
-  const stateRef = useRef<Doc>();
-  stateRef.current = doc;
+  const docRef = useRef<Doc>();
+  docRef.current = doc;
 
-  if (!wsClient) {
-    wsClient = new AutomergeWsClient({
-      socket: ws,
-      savedData: null,
-      save: null,
-      onChange: null,
-      onMessage: (message: any) => {
-        if (message.data && message.data.changes) {
-          const changedDoc = applyChanges(stateRef.current, message.data.changes);
-          setDoc(changedDoc);
-        }
+  const [history, setHistory] = useState(new Array(new Array()));
+
+  const clientRef = useRef<AutomergeWsClient>(new AutomergeWsClient({
+    socket: new WebSocket('ws://localhost:4400/automerge'),
+    savedData: null,
+    save: null,
+    onChange: (docId: any, doc: Doc) => {
+// Get TypeError in handleTextChange: The first argument to Automerge.change must be the document root
+//      setDoc(doc);
+    },
+    onMessage: (message: any) => {
+      if (message.data && message.data.changes) {
+        const changedDoc = applyChanges(docRef.current, message.data.changes);
+        setDoc(changedDoc);
       }
-    });
-    wsClient.subscribe(DOC_ID);
-  }
+    }
+  }));
+
+  useEffect(() => {
+    clientRef.current.subscribe(docId);
+  }, []);
 /*
   useEffect(() => {
     ws.onmessage = (message: any) => {
@@ -72,7 +73,7 @@ const handleTextChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const newDoc = applyInput(doc, diff);
     setDoc(newDoc);
     const changes = getChanges(doc, newDoc);
-    const ret = wsClient.applyChanges(DOC_ID, changes);
+    const ret = clientRef.current.applyChanges(docId, changes);
     if (!ret) {
       console.error('Failed to apply changes to the doc.')
     };
@@ -82,11 +83,11 @@ const handleTextChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setHistory(getHistory(doc));
   };
 
-  const value =  doc.textArea ? doc.textArea.toString() : '';
+  const value = doc.textArea ? doc.textArea.toString() : '';
 
   return (
     <div>
-      <h3>Automerge TextArea</h3>
+      <h3>Automerge TextArea (id: {docId})</h3>
       <textarea
         cols={80}
         rows={5}
@@ -98,6 +99,6 @@ const handleTextChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     </div>
   );
 
-};
+}
 
 export default AutomergeTextArea;
