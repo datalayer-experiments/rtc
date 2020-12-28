@@ -64,7 +64,7 @@ const AutomergeTextArea = (props: {docId: string}) => {
           setDoc(changedDoc);
         }
       }
-    };
+    }
   });
 */
 const handleTextChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
@@ -76,12 +76,12 @@ const handleTextChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const ret = clientRef.current.applyChanges(docId, changes);
     if (!ret) {
       console.error('Failed to apply changes to the doc.')
-    };
-  };
+    }
+  }
 
   const handleShowHistory = () => {
     setHistory(getHistory(doc));
-  };
+  }
 
   const value = doc.textArea ? doc.textArea.toString() : '';
 

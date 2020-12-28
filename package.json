@@ -5,7 +5,7 @@
   "private": true,
   "workspaces": [
     "packages/*",
-    "externals/*"
+    "externals/automerge"
   ],
   "scripts": {
     "build": "lerna run build",
@@ -19,22 +19,22 @@
     "lint:typescript:check": "eslint . --ext 'ts,tsx' --ignore-path .gitignore",
     "version": "lerna version",
     "automerge:hello": "yarn workspace @datalayer-rtc/automerge run hello",
-    "automerge:start-server": "yarn workspace @datalayer-rtc/automerge run server:ws:start:1",
+    "automerge:start-server:1": "yarn workspace @datalayer-rtc/automerge run server:ws:start:1",
+    "automerge:start-server:2": "yarn workspace @datalayer-rtc/automerge run server:ws:start:2",
     "automerge:wait": "yarn workspace @datalayer-rtc/automerge run server:ws:wait",
     "yjs:start": "yarn workspace @datalayer-rtc/yjs run start",
     "yjs:start-server": "yarn workspace @datalayer-rtc/yjs run server:ws:start",
     "yjs:wait": "yarn workspace @datalayer-rtc/yjs run server:ws:wait",
     "yjs:hello": "yarn workspace @datalayer-rtc/yjs run hello",
     "yjs:providers": "yarn workspace @datalayer-rtc/yjs run providers",
-    "textarea": "npm-run-all --parallel yjs:start-server automerge:start-server textarea:wait-start",
+    "textarea": "npm-run-all --parallel yjs:start-server automerge:start-server:1 textarea:wait-start",
+    "textarea2": "npm-run-all --parallel automerge:start-server:2 textarea:start",
     "textarea:start": "yarn workspace @datalayer-rtc/textarea run start",
     "textarea:wait-start": "npm-run-all yjs:wait automerge:wait textarea:start"
   },
   "dependencies": {
   },
   "resolutions": {
-    "lodash": "4.17.15",
-    "rxjs": "6.6.0"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "~4.2.0",

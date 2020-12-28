@@ -5,7 +5,7 @@ import * as assert from 'assert'
 import * as Automerge from 'automerge'
 
 import * as wasmBackend from 'automerge-backend-wasm'
-Automerge.setDefaultBackend(wasmBackend)
+// Automerge.setDefaultBackend(wasmBackend)
 
 interface Birds {
   birds: [string]

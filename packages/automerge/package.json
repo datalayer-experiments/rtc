@@ -26,13 +26,15 @@
     "test:automerge:typescript": "jest src/AutomergeTypescript.test.ts",
     "test:automerge:wasm": "jest src/AutomergeWasm.test.ts",
     "server:ws:start:1": "ts-node src/ws-1/AutomergeWsServerStart.ts",
+    "server:ws:start:2": "ts-node src/ws-2/AutomergeServer.ts",
     "server:ws:wait": "wait-on tcp:4400",
     "client:ws:cli": "ts-node src/ws-1/AutomergeWsCli.ts"
   },
   "dependencies": {
     "automerge": "file:./../../externals/automerge",
     "automerge-backend-wasm": "file:./../../externals/automerge-backend-wasm",
-    "universal-websocket-client": "1.0.2"
+    "universal-websocket-client": "1.0.2",
+    "lib0": "0.2.35"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",

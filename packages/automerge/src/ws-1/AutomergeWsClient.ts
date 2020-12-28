@@ -56,8 +56,6 @@ function doLoad(string) {
   return ret;
 }
 
-// AutomergeClient
-
 class AutomergeWsClient {
   private socket = null;
   private save = null;

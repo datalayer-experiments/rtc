@@ -34,7 +34,8 @@ const yxml = new Y.XmlFragment()
 // XmlElement.
 const yxmlel = new Y.XmlElement()
 
-// Document Updates - Changes on the shared document are encoded into document updates. Document updates are commutative and idempotent. This means that they can be applied in any order and multiple times. - Example: Listen to update events and apply them on remote client.
+// Document Updates - Changes on the shared document are encoded into document updates. Document updates are commutative and idempotent. This means that they can be applied in any order and multiple times.
+// Example: Listen to update events and apply them on remote client.
 const doc1 = new Y.Doc()
 const doc2 = new Y.Doc()
 doc1.on('update', update => {
