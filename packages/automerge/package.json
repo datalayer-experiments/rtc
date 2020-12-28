@@ -25,9 +25,12 @@
     "test:automerge:changes": "jest src/AutomergeChanges.test.ts",
     "test:automerge:typescript": "jest src/AutomergeTypescript.test.ts",
     "test:automerge:wasm": "jest src/AutomergeWasm.test.ts",
+    "server:ws:start": "npm-run-all --parallel server:ws:start:1 server:ws:start:2",
     "server:ws:start:1": "ts-node src/ws-1/AutomergeWsServerStart.ts",
     "server:ws:start:2": "ts-node src/ws-2/AutomergeServer.ts",
-    "server:ws:wait": "wait-on tcp:4400",
+    "server:ws:wait": "npm-run-all --parallel server:ws:wait:1 server:ws:wait:2",
+    "server:ws:wait:1": "wait-on tcp:4400",
+    "server:ws:wait:2": "wait-on tcp:4321",
     "client:ws:cli": "ts-node src/ws-1/AutomergeWsCli.ts"
   },
   "dependencies": {

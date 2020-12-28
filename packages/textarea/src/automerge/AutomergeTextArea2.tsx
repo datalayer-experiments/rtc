@@ -49,7 +49,6 @@ const AutomergeTextArea2 = (props: {docId: string}) => {
     const newDoc = applyInput(doc, diff);
     setDoc(newDoc);
     const changes = getChanges(doc, newDoc);
-    console.log('---', changes);
     wsRef.current.send(JSON.stringify({ changes: changes }));
   }
 

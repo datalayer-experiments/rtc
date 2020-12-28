@@ -25,17 +25,10 @@ const send = (doc, conn, changes) => {
     const message = {
       changes: changes
     }
-    console.log('Sending message: ', message)
     conn.send(JSON.stringify(message), err => { err != null && onClose(doc, conn, err) })
   } catch (e) {
     onClose(doc, conn, e)
   }
-}
-
-const updateHandler = (doc, changes) => {
-  console.log("--- New doc", doc)
-  console.log("--- Changes", changes)
-//  doc.conns.forEach((_, conn) => send(doc, conn, message))
 }
 
 class WSSharedDoc extends WatchableDoc {
@@ -46,15 +39,12 @@ class WSSharedDoc extends WatchableDoc {
     super(doc)
     this.name = doc.docId
     this.mux = mutex.createMutex()
-    this.registerHandler(updateHandler)
   }
 }
 
 const onMessage = (conn, doc, message) => {
-  console.log(message)
   const m = JSON.parse(message)
-  console.log('---', m['changes'])
-  send(doc, conn, m['changes'])
+  doc.conns.forEach((_, conn) => send(doc, conn, m['changes']))
 }
 
 export const getDoc = (docname) => map.setIfUndefined(docs, docname, () => {
