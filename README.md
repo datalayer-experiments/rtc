@@ -6,7 +6,7 @@
 [x] yjs textarea + node.js server
 [x] automerge textarea + node.js server
 [x] yjs textarea + node.js server (simple version)
-[ ] automerge textarea + node.js server (simple version)
+[x] automerge textarea + node.js server (simple version)
 [ ] automerge textarea + node.js server (simple version performance branch) (A)
 [x] jupyter-server extension with websocket + call to node.js server [link](https://github.com/datalayer/examples/tree/main/jupyter-server-extension)
 [x] rust as python module
@@ -19,26 +19,63 @@
 ```bash
 git clone https://github.com/datalayer-experiments/rtc.git && \
   cd rtc && \
-  git submodule init && \
-  git submodule update
+  git submodule update --init
 ```
 
 ```bash
-yarn && \ # Install node modules.
-  rm -fr packages/automerge/node_modules/automerge && \ # Fix me!
+cd externals/automerge && \
+  git fetch origin && \
+  git checkout datalayer && \
+  yarn && \ # Install node modules.
+  yarn build # Build node modules.
 ```
 
-Manually update the `BackendState` declaration in `externals/automerge/@types/automerge/index.d.ts` with:
-
-```js
-  interface BackendState {
-    getIn(s: any): any
-  }
+```bash
+cd externals/automerge-performance && \
+  git fetch origin && \
+  git checkout datalayer-perf && \
+  yarn && \ # Install node modules.
+  yarn build # Build node modules.
 ```
 
+```bash
+# From the root of rtc-experiments folder.
+cd externals/automerge-rs-nodejs && \
+  git fetch origin && \
+  git checkout datalayer-nodejs && \
+  cargo build && \
+  cd automerge-backend-wasm && \
+  cargo install wasm-pack && \
+  yarn install && \
+  yarn build && \
+  yarn release
 ```
-yarn build && \ # Build.
-  yarn textarea # Start the textarea example.
+
+```bash
+# From the root of rtc-experiments folder.
+cd externals/automerge-rs-bundler && \
+  git fetch origin && \
+  git checkout datalayer-bundler && \
+  cargo build && \
+  cd automerge-backend-wasm && \
+  cargo install wasm-pack && \
+  yarn install && \
+  yarn build && \
+  yarn release
+```
+
+From the root of rtc-experiments folder, install, build and start the textarea application.
+
+```bash
+yarn # Install node modules.
+```
+
+```bash
+yarn build # Build.
+```
+
+```bash
+yarn textarea # Start the textarea example.
 ```
 
 This repository contains sources taken from various repositories:

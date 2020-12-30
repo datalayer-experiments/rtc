@@ -5,7 +5,7 @@
   "private": true,
   "workspaces": [
     "packages/*",
-    "externals/automerge"
+    "externals/*"
   ],
   "scripts": {
     "build": "lerna run build",
@@ -18,9 +18,9 @@
     "lint:typescript": "yarn run lint:typescript:check --fix",
     "lint:typescript:check": "eslint . --ext 'ts,tsx' --ignore-path .gitignore",
     "version": "lerna version",
-    "automerge:hello": "yarn workspace @datalayer-rtc/automerge run hello",
-    "automerge:start-server": "yarn workspace @datalayer-rtc/automerge run server:ws:start",
-    "automerge:wait": "yarn workspace @datalayer-rtc/automerge run server:ws:wait",
+    "automerge:hello": "yarn workspace @datalayer-rtc/automerge-perf run hello",
+    "automerge:start-server": "yarn workspace @datalayer-rtc/automerge-perf run server:ws:start",
+    "automerge:wait": "yarn workspace @datalayer-rtc/automerge-perf run server:ws:wait",
     "yjs:start": "yarn workspace @datalayer-rtc/yjs run start",
     "yjs:start-server": "yarn workspace @datalayer-rtc/yjs run server:ws:start",
     "yjs:wait": "yarn workspace @datalayer-rtc/yjs run server:ws:wait",

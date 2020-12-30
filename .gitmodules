@@ -1,4 +1,16 @@
 [submodule "automerge"]
   path = externals/automerge
-  url = https://github.com/datalayer-contrib/automerge
+  url = https://github.com/datalayer-contrib/automerge.git
   branch = datalayer
+[submodule "automerge-performance"]
+  path = externals/automerge-performance
+  url = https://github.com/datalayer-contrib/automerge.git
+  branch = datalayer-performance
+[submodule "externals/automerge-rs-nodejs"]
+	path = externals/automerge-rs-nodejs
+	url = https://github.com/datalayer-contrib/automerge-rs.git
+  branch = datalayer-nodejs
+[submodule "externals/automerge-rs-bundler"]
+	path = externals/automerge-rs-bundler
+	url = https://github.com/datalayer-contrib/automerge-rs.git
+  branch = datalayer-bundler

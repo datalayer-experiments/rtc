@@ -1,5 +1,5 @@
 {
-  "name": "@datalayer-rtc/automerge",
+  "name": "@datalayer-rtc/automerge-performance",
   "license": "MIT",
   "version": "0.1.0",
   "files": [
@@ -21,21 +21,19 @@
     "watch": "tsc -w --listEmittedFiles",
     "hello": "ts-node src/index.ts",
     "test": "jest",
-    "test:automerge": "jest src/Automerge.test.ts",
+    "test:automerge": "jest src/frontend.test.ts",
     "test:automerge:changes": "jest src/AutomergeChanges.test.ts",
     "test:automerge:typescript": "jest src/AutomergeTypescript.test.ts",
     "test:automerge:wasm": "jest src/AutomergeWasm.test.ts",
-    "server:ws:start": "npm-run-all --parallel server:ws:start:1 server:ws:start:2",
-    "server:ws:start:1": "ts-node src/ws-1/AutomergeWsServerStart.ts",
+    "server:ws:start": "npm-run-all --parallel server:ws:start:2",
     "server:ws:start:2": "ts-node src/ws-2/AutomergeServer.ts",
-    "server:ws:wait": "npm-run-all --parallel server:ws:wait:1 server:ws:wait:2",
-    "server:ws:wait:1": "wait-on tcp:4400",
+    "server:ws:wait": "npm-run-all --parallel server:ws:wait:2",
     "server:ws:wait:2": "wait-on tcp:4321",
     "client:ws:cli": "ts-node src/ws-1/AutomergeWsCli.ts"
   },
   "dependencies": {
-    "automerge": "file:./../../externals/automerge",
-    "automerge-backend-wasm": "file:./../../externals/automerge-rs-nodejs/automerge-backend-wasm",
+    "automerge-performance": "file:./../../externals/automerge-performance",
+    "automerge-backend-wasm-nodejs": "file:./../../externals/automerge-rs-nodejs/automerge-backend-wasm",
     "universal-websocket-client": "1.0.2",
     "lib0": "0.2.35"
   },

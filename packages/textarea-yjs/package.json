@@ -1,5 +1,5 @@
 {
-  "name": "@datalayer-rtc/textarea",
+  "name": "@datalayer-rtc/textarea-yjs",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -10,7 +10,6 @@
     "serve": "serve dist -p 3002"
   },
   "dependencies": {
-    "@datalayer-rtc/automerge": "0.1.0",
     "@datalayer-rtc/yjs": "0.1.0",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
