@@ -16,53 +16,20 @@
 [ ] port (A) to jupyter-server (python + rust as python module)
 ```
 
+
+#### Install submobules 
 ```bash
 git clone https://github.com/datalayer-experiments/rtc.git && \
   cd rtc && \
   git submodule update --init
 ```
 
+#### Build dependencies
 ```bash
-cd externals/automerge && \
-  git fetch origin && \
-  git checkout datalayer && \
-  yarn && \ # Install node modules.
-  yarn build # Build node modules.
+./build_dependencies.sh
 ```
 
-```bash
-cd externals/automerge-performance && \
-  git fetch origin && \
-  git checkout datalayer-performance && \
-  yarn && \ # Install node modules.
-  yarn build # Build node modules.
-```
-
-```bash
-# From the root of rtc-experiments folder.
-cd externals/automerge-rs-nodejs && \
-  git fetch origin && \
-  git checkout datalayer-nodejs && \
-  cargo build && \
-  cd automerge-backend-wasm && \
-  cargo install wasm-pack && \
-  yarn install && \
-  yarn build && \
-  yarn release
-```
-
-```bash
-# From the root of rtc-experiments folder.
-cd externals/automerge-rs-bundler && \
-  git fetch origin && \
-  git checkout datalayer-bundler && \
-  cargo build && \
-  cd automerge-backend-wasm && \
-  cargo install wasm-pack && \
-  yarn install && \
-  yarn build && \
-  yarn release
-```
+#### Build the project
 
 From the root of rtc-experiments folder, install, build and start the textarea application.
 
