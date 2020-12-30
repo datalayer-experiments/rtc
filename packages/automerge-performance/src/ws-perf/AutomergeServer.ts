@@ -1,10 +1,11 @@
 import WebSocket from 'ws'
 
-import Automerge, { Frontend, Backend, Text, FreezeObject } from 'automerge-performance'
-const CodecFunctions = require('automerge-performance/backend/columnar')
-import wasmBackend from 'automerge-backend-wasm-nodejs'
-wasmBackend.initCodecFunctions(CodecFunctions)
-Automerge.setDefaultBackend(wasmBackend)
+import Automerge, { Text } from 'automerge-performance'
+
+// const CodecFunctions = require('automerge-performance/backend/columnar')
+// import wasmBackend from 'automerge-backend-wasm-nodejs'
+// wasmBackend.initCodecFunctions(CodecFunctions)
+// Automerge.setDefaultBackend(wasmBackend)
 
 import WatchableDoc from './WatchableDoc'
 
@@ -28,10 +29,8 @@ const send = (doc, conn, changes) => {
     onClose(doc, conn, null)
   }
   try {
-    const message = {
-      changes: changes
-    }
-    conn.send(JSON.stringify(message), err => { err != null && onClose(doc, conn, err) })
+    console.log(changes[0])
+    conn.send(changes[0], err => { err != null && onClose(doc, conn, err) })
   } catch (e) {
     onClose(doc, conn, e)
   }
@@ -41,7 +40,7 @@ class WSSharedDoc extends WatchableDoc {
   private name = null;
   private mux = null;
   public conns = new Map()
-  constructor(doc: FreezeObject<Doc>) {
+  constructor(doc: Doc) {
     super(doc)
     this.name = doc.docId
     this.mux = mutex.createMutex()
@@ -49,13 +48,14 @@ class WSSharedDoc extends WatchableDoc {
 }
 
 const onMessage = (conn, doc, message) => {
-  const m = JSON.parse(message)
-  doc.conns.forEach((_, conn) => send(doc, conn, m['changes']))
+  const m = message
+  console.log(m)
+  doc.conns.forEach((_, conn) => send(doc, conn, [m]))
 }
 
 export const getDoc = (docName) => map.setIfUndefined(docs, docName, () => {
-  const d = Frontend.init<Doc>()
-  const [doc1, req] = Frontend.change(d, doc => {
+  const d = Automerge.init<Doc>()
+  const doc1 = Automerge.change(d, doc => {
     doc.docId = docName;
     doc.textArea = new Automerge.Text();
     doc.textArea.insertAt(0, 'h', 'e', 'l', 'l', 'o')
@@ -76,15 +76,14 @@ const onClose = (doc, conn, err) => {
 }
 
 const setupWSConnection = (conn, req, { docName = req.url.slice(1).split('?')[0], gc = true } = {}) => {
+  conn.binaryType = 'arraybuffer'
   const doc: WSSharedDoc = getDoc(docName)
   doc.conns.set(conn, new Set())
   conn.on('message', message => onMessage(conn, doc, message))
   conn.on('close', err => onClose(doc, conn, err))
   // put the following in a variables in a block so the interval handlers don't keep in in scope
   {
-    console.log(doc.get())
-    console.log(wasmBackend)
-    const changes = wasmBackend.getChanges(Frontend.getBackendState(doc.get()), [])
+    const changes = Automerge.getAllChanges(doc.get())
     send(doc, conn, changes)
   }
 }

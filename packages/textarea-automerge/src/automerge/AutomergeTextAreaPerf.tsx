@@ -30,15 +30,12 @@ const AutomergeTextAreaPerf = (props: {docId: string}) => {
 
   useEffect(() => {
     wsRef.current = new WebSocket('ws://localhost:4321/my-room')
+    wsRef.current.binaryType = 'arraybuffer';
     wsRef.current.onmessage = (message: any) => {
       if (message.data) {
-        const m = JSON.parse(message.data);
-        console.log(m)
-        if (m.changes) {
-          const changes = m.changes;
-          const changedDoc = applyChanges(docRef.current, changes);
-          setDoc(changedDoc);
-        }
+        const data = new Uint8Array(message.data);
+        const changedDoc = applyChanges(docRef.current, [data]);
+        setDoc(changedDoc);
       }
     }
   }, []);
@@ -49,7 +46,7 @@ const AutomergeTextAreaPerf = (props: {docId: string}) => {
     const newDoc = applyInput(doc, diff);
     setDoc(newDoc);
     const changes = getChanges(doc, newDoc);
-    wsRef.current.send(JSON.stringify({ changes: changes }));
+    wsRef.current.send((changes[0] as any));
   }
 
   const handleShowHistory = () => {
