@@ -35,7 +35,6 @@
   },
   "dependencies": {
     "automerge": "file:./../../externals/automerge",
-    "automerge-backend-wasm": "file:./../../externals/automerge-rs-nodejs/automerge-backend-wasm",
     "universal-websocket-client": "1.0.2",
     "lib0": "0.2.35"
   },

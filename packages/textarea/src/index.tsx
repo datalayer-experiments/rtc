@@ -16,10 +16,8 @@ import './index.css';
 render(
   <div>
     <AutomergeTextArea2 docId="next" />
-{/*
     <AutomergeTextArea docId="first" />
     <AutomergeTextArea docId="second" />
-*/}
     <YTextArea docId="first" />
     <YTextArea docId="second" />
     <YCodeMirror />

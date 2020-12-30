@@ -21,15 +21,10 @@
     "watch": "tsc -w --listEmittedFiles",
     "hello": "ts-node src/index.ts",
     "test": "jest",
-    "test:automerge": "jest src/frontend.test.ts",
-    "test:automerge:changes": "jest src/AutomergeChanges.test.ts",
-    "test:automerge:typescript": "jest src/AutomergeTypescript.test.ts",
-    "test:automerge:wasm": "jest src/AutomergeWasm.test.ts",
-    "server:ws:start": "npm-run-all --parallel server:ws:start:2",
-    "server:ws:start:2": "ts-node src/ws-2/AutomergeServer.ts",
-    "server:ws:wait": "npm-run-all --parallel server:ws:wait:2",
-    "server:ws:wait:2": "wait-on tcp:4321",
-    "client:ws:cli": "ts-node src/ws-1/AutomergeWsCli.ts"
+    "test:automerge": "jest src/automerge.test.js",
+    "test:frontend": "jest src/frontend.test.js",
+    "server:ws:start": "ts-node src/ws-perf/AutomergeServer.ts",
+    "server:ws:wait": "wait-on tcp:4321"
   },
   "dependencies": {
     "automerge-performance": "file:./../../externals/automerge-performance",

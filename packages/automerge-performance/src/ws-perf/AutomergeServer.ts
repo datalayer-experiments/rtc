@@ -1,7 +1,9 @@
 import WebSocket from 'ws'
 
-import Automerge, { Text } from 'automerge-performance'
-import wasmBackend from 'automerge-backend-wasm'
+import Automerge, { Frontend, Backend, Text, FreezeObject } from 'automerge-performance'
+const CodecFunctions = require('automerge-performance/backend/columnar')
+import wasmBackend from 'automerge-backend-wasm-nodejs'
+wasmBackend.initCodecFunctions(CodecFunctions)
 Automerge.setDefaultBackend(wasmBackend)
 
 import WatchableDoc from './WatchableDoc'
@@ -39,7 +41,7 @@ class WSSharedDoc extends WatchableDoc {
   private name = null;
   private mux = null;
   public conns = new Map()
-  constructor(doc: Doc) {
+  constructor(doc: FreezeObject<Doc>) {
     super(doc)
     this.name = doc.docId
     this.mux = mutex.createMutex()
@@ -51,16 +53,17 @@ const onMessage = (conn, doc, message) => {
   doc.conns.forEach((_, conn) => send(doc, conn, m['changes']))
 }
 
-export const getDoc = (docname) => map.setIfUndefined(docs, docname, () => {
-  const doc = Automerge.change(Automerge.init<Doc>(), doc => {
-    doc.docId = docname;
+export const getDoc = (docName) => map.setIfUndefined(docs, docName, () => {
+  const d = Frontend.init<Doc>()
+  const [doc1, req] = Frontend.change(d, doc => {
+    doc.docId = docName;
     doc.textArea = new Automerge.Text();
     doc.textArea.insertAt(0, 'h', 'e', 'l', 'l', 'o')
     doc.textArea.deleteAt(0)
     doc.textArea.insertAt(0, 'H')
   })
-  const sharedDoc = new WSSharedDoc(doc)
-  docs.set(docname, sharedDoc)
+  const sharedDoc = new WSSharedDoc(doc1)
+  docs.set(docName, sharedDoc)
   return sharedDoc
 })
 
@@ -79,7 +82,9 @@ const setupWSConnection = (conn, req, { docName = req.url.slice(1).split('?')[0]
   conn.on('close', err => onClose(doc, conn, err))
   // put the following in a variables in a block so the interval handlers don't keep in in scope
   {
-    const changes = Automerge.getAllChanges(doc.get())
+    console.log(doc.get())
+    console.log(wasmBackend)
+    const changes = wasmBackend.getChanges(Frontend.getBackendState(doc.get()), [])
     send(doc, conn, changes)
   }
 }

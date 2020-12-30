@@ -33,7 +33,7 @@ cd externals/automerge && \
 ```bash
 cd externals/automerge-performance && \
   git fetch origin && \
-  git checkout datalayer-perf && \
+  git checkout datalayer-performance && \
   yarn && \ # Install node modules.
   yarn build # Build node modules.
 ```

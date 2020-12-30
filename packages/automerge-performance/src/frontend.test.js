@@ -1,11 +1,25 @@
 const assert = require('assert')
+const path = require('path')
 
-import { Frontend, Backend, uuid } from 'automerge'
+import Automerge, { Frontend, Backend, uuid } from 'automerge-performance'
 
-const { STATE } = require('automerge/frontend/constants')
+const { STATE } = require('automerge-performance/frontend/constants')
 
 const ROOT_ID = '00000000-0000-0000-0000-000000000000'
 const UUID_PATTERN = /^[0-9a-f]{32}$/
+
+const CodecFunctions = require('automerge-performance/backend/columnar')
+
+beforeAll(() => {
+  if (process.env.WASM_BACKEND_PATH) {
+    const wasmBackend = require(path.resolve(process.env.WASM_BACKEND_PATH))
+    wasmBackend.initCodecFunctions(CodecFunctions)
+    Automerge._js_backend = Automerge.Backend
+    Automerge.setDefaultBackend(wasmBackend)
+  } else {
+    throw new RangeError('Please set environment variable WASM_BACKEND_PATH to the path of the WebAssembly backend')
+  }  
+});
 
 describe('Automerge.Frontend', () => {
   describe('initializing', () => {

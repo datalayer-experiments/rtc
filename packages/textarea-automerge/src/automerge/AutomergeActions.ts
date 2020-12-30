@@ -1,4 +1,9 @@
-import Automerge, { Text } from "automerge";
+import Automerge, { Text } from "automerge-performance";
+
+import CodecFunctions from 'automerge-performance/backend/columnar'
+import wasmBackend from 'automerge-backend-wasm-bundler';
+wasmBackend.initCodecFunctions(CodecFunctions)
+Automerge.setDefaultBackend(wasmBackend);
 
 import { SimpleDiff } from '../utils/simpleDiff';
 
