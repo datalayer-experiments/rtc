@@ -12,6 +12,7 @@
     "build:test": "lerna run build:test",
     "build:tsc": "tsc --build tools/* packages/* examples/*",
     "clean": "lerna run clean",
+    "clean:force": "find . -name node_modules | xargs rm -fr {}",
     "clean:all": "lerna run clean:all && rimraf node_modules yarn.lock",
     "clean:tests": "lerna run clean:tests",
     "lint:duplicates": "yarn run yarn-deduplicate --list --fail",

@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@datalayer-rtc/automerge-performance": "0.1.0",
-    "automerge-wasm": "file:./../../externals/automerge-wasm",
+    "automerge-performance": "file:./../../externals/automerge-performance",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "codemirror": "5.58.3",

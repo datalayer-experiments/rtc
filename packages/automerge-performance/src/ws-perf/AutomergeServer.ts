@@ -1,6 +1,6 @@
 import WebSocket from 'ws'
 
-import Automerge, { Text } from 'automerge-wasm'
+import Automerge, { Text } from 'automerge-performance'
 
 // const CodecFunctions = require('automerge-performance/backend/columnar')
 // import wasmBackend from 'automerge-backend-wasm-nodejs'
