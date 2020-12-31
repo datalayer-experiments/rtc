@@ -27,8 +27,7 @@
     "server:ws:wait": "wait-on tcp:4321"
   },
   "dependencies": {
-    "automerge-performance": "file:./../../externals/automerge-performance",
-    "automerge-backend-wasm-nodejs": "file:./../../externals/automerge-rs-nodejs/automerge-backend-wasm",
+    "automerge-wasm": "file:./../../externals/automerge-wasm",
     "universal-websocket-client": "1.0.2",
     "lib0": "0.2.35"
   },

@@ -5,7 +5,10 @@
 [submodule "automerge-performance"]
   path = externals/automerge-performance
   url = https://github.com/datalayer-contrib/automerge.git
-  branch = datalayer-performance
+[submodule "automerge-wasm"]
+  path = externals/automerge-wasm
+  url = https://github.com/datalayer-contrib/automerge.git
+  branch = wasm-node-local-change
 [submodule "externals/automerge-rs-nodejs"]
 	path = externals/automerge-rs-nodejs
 	url = https://github.com/datalayer-contrib/automerge-rs.git
