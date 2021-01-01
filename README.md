@@ -10,6 +10,8 @@ git clone https://github.com/datalayer-experiments/rtc.git && \
   ./build_submodules.sh
 ```
 
+pip install -e .
+
 ```bash
 # From the root of rtc-experiments folder, install, build and start the textarea application.
 yarn       # Install the node modules.

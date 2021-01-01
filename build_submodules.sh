@@ -43,20 +43,18 @@ cd externals/automerge-performance && \
   yarn build && \ # Build node modules.
   cd $root_dir
 
+cargo install wasm-pack
+
 cd externals/automerge-rs-nodejs && \
   cargo build && \
   cd automerge-backend-wasm && \
-  cargo install wasm-pack && \
   yarn install && \
   yarn build && \
-  yarn release && \
   cd $root_dir
 
 cd externals/automerge-rs-bundler && \
   cargo build && \
   cd automerge-backend-wasm && \
-  cargo install wasm-pack && \
   yarn install && \
   yarn build && \
-  yarn release && \
   cd $root_dir
