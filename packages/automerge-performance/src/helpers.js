@@ -1,6 +1,6 @@
 const assert = require('assert')
-const { Encoder } = require('automerge-performance/backend/encoding')
-const { decodeChanges } = require('automerge-performance/backend/columnar')
+const { Encoder } = require('automerge-wasm-node/backend/encoding')
+const { decodeChanges } = require('automerge-wasm-node/backend/columnar')
 
 // Assertion that succeeds if the first argument deepStrictEquals at least one of the
 // subsequent arguments (but we don't care which one)

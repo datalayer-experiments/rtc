@@ -1,6 +1,6 @@
-import Automerge, { Text } from "automerge-performance";
+import Automerge, { Text } from "automerge-wasm-bundler";
 
-// import CodecFunctions from 'automerge-performance/backend/columnar'
+// import CodecFunctions from 'automerge-wasm-bundler/backend/columnar'
 // import wasmBackend from 'automerge-backend-wasm-bundler';
 // wasmBackend.initCodecFunctions(CodecFunctions)
 // Automerge.setDefaultBackend(wasmBackend);

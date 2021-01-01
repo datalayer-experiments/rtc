@@ -1,23 +1,18 @@
-[submodule "automerge"]
-  path = externals/automerge
-  url = https://github.com/datalayer-contrib/automerge.git
-  branch = datalayer
-[submodule "automerge-performance"]
-  path = externals/automerge-performance
-  url = https://github.com/datalayer-contrib/automerge.git
-[submodule "automerge-wasm-node"]
-  path = externals/automerge-wasm-node
-  url = https://github.com/datalayer-contrib/automerge.git
-  branch = wasm-node
-[submodule "automerge-wasm-bundler"]
-  path = externals/automerge-wasm-bundler
-  url = https://github.com/datalayer-contrib/automerge.git
-  branch = wasm-bundler
+[submodule "externals/automerge"]
+	path = externals/automerge
+	url = https://github.com/datalayer-contrib/automerge.git
+[submodule "externals/automerge-performance"]
+	path = externals/automerge-performance
+	url = https://github.com/datalayer-contrib/automerge.git
+[submodule "externals/automerge-wasm-nodejs"]
+	path = externals/automerge-wasm-nodejs
+	url = https://github.com/datalayer-contrib/automerge.git
+[submodule "externals/automerge-wasm-bundler"]
+	path = externals/automerge-wasm-bundler
+	url = https://github.com/datalayer-contrib/automerge.git
 [submodule "externals/automerge-rs-nodejs"]
 	path = externals/automerge-rs-nodejs
 	url = https://github.com/datalayer-contrib/automerge-rs.git
-  branch = datalayer-nodejs
 [submodule "externals/automerge-rs-bundler"]
 	path = externals/automerge-rs-bundler
 	url = https://github.com/datalayer-contrib/automerge-rs.git
-  branch = datalayer-bundler
