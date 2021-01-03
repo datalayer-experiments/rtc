@@ -24,12 +24,10 @@
     "automerge:performance:start-server": "yarn workspace @datalayer-rtc/automerge-performance run server:ws:start",
     "automerge:wait": "yarn workspace @datalayer-rtc/automerge run server:ws:wait",
     "automerge:performance:wait": "yarn workspace @datalayer-rtc/automerge-performance run server:ws:wait",
-    "yjs:start": "yarn workspace @datalayer-rtc/yjs run start",
-    "yjs:start-server": "yarn workspace @datalayer-rtc/yjs run server:ws:start",
-    "yjs:wait": "yarn workspace @datalayer-rtc/yjs run server:ws:wait",
-    "yjs:hello": "yarn workspace @datalayer-rtc/yjs run hello",
-    "yjs:providers": "yarn workspace @datalayer-rtc/yjs run providers",
-    "textarea:automerge": "npm-run-all --parallel automerge:performance:start-server textarea:automerge:wait-start",
+    "jupyter-server:start": "fkill -s :8989 && jupyter server --port 8989 --ServerApp.token= --ServerApp.password='' --NotebookApp.allow_origin='*' --ServerApp.allow_origin='*' --ServerApp.tornado_settings=\"{ 'headers': { 'Access-Control-Allow-Origin': '*' } }\"",
+    "jupyter-server:wait-start": "npm-run-all --parallel jupyter-server:start jupyter-server:wait",
+    "jupyter-server:wait": "wait-on tcp:8989",
+    "textarea:automerge": "npm-run-all --parallel jupyter-server:start automerge:performance:start-server textarea:automerge:wait-start",
     "textarea:automerge:start": "yarn workspace @datalayer-rtc/textarea-automerge run start",
     "textarea:automerge:wait-start": "npm-run-all automerge:performance:wait textarea:automerge:start",
     "textarea:yjs": "npm-run-all --parallel yjs:start-server textarea:yjs:wait-start",
@@ -37,7 +35,12 @@
     "textarea:yjs:wait-start": "npm-run-all yjs:wait textarea:yjs:start",
     "textarea": "npm-run-all --parallel yjs:start-server automerge:start-server textarea:wait-start",
     "textarea:start": "yarn workspace @datalayer-rtc/textarea run start",
-    "textarea:wait-start": "npm-run-all yjs:wait automerge:wait textarea:start"
+    "textarea:wait-start": "npm-run-all yjs:wait automerge:wait textarea:start",
+    "yjs:start": "yarn workspace @datalayer-rtc/yjs run start",
+    "yjs:start-server": "yarn workspace @datalayer-rtc/yjs run server:ws:start",
+    "yjs:wait": "yarn workspace @datalayer-rtc/yjs run server:ws:wait",
+    "yjs:hello": "yarn workspace @datalayer-rtc/yjs run hello",
+    "yjs:providers": "yarn workspace @datalayer-rtc/yjs run providers"
   },
   "dependencies": {
   },
@@ -51,9 +54,11 @@
     "eslint-config-prettier": "6.11.0",
     "eslint-plugin-react": "7.20.3",
     "eslint-plugin-react-hooks": "4.0.6",
+    "fkill-cli": "6.0.1",
     "lerna": "^3.19.0",
     "npm-run-all": "4.1.5",
     "rimraf": "3.0.2",
+    "wait-on": "5.0.1",
     "yarn-deduplicate": "2.0.0"
   }
 }

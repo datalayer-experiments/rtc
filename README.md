@@ -16,6 +16,13 @@ pip install -e .
 ```
 
 ```bash
+# From the root of rtc-experiments folder, install the python package.
+cd externals/jupyter-proxy-server && \
+  git checkout no-check-origin && \
+  pip install .
+```
+
+```bash
 # From the root of rtc-experiments folder, install, build and start the textarea application.
 yarn       # Install the node modules.
 yarn build # Build.

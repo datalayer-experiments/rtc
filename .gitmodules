@@ -16,3 +16,6 @@
 [submodule "externals/automerge-rs-bundler"]
 	path = externals/automerge-rs-bundler
 	url = https://github.com/datalayer-contrib/automerge-rs.git
+[submodule "externals/jupyter-proxy-server"]
+	path = externals/jupyter-proxy-server
+	url = https://github.com/datalayer-contrib/jupyter-proxy-server.git

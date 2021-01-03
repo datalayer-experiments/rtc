@@ -15,10 +15,7 @@ module.exports = {
   },
   devtool: 'inline-source-map',
   resolve: {
-    extensions: [".ts", ".tsx", ".js", ".jsx"],
-    alias: {
-      'ws': path.resolve(path.join(__dirname, 'node_modules/ws/index.js' )) // fix for https://github.com/websockets/ws/issues/1538
-    }
+    extensions: [".ts", ".tsx", ".js", ".jsx"]
   },
   module: {
     rules: [

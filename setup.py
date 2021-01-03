@@ -30,8 +30,8 @@ setup(
     keywords="jupyter rtc",
     python_requires=">=3.6",
     install_requires=[
-        "fastapi",
-        "typing",
+        "jupyter_server",
+        "jupyter_server_proxy",
     ],
     extras_require={
         "sphinx": [],
@@ -44,8 +44,7 @@ setup(
             "coverage",
             "pytest>=3.6,<4",
             "pytest-cov",
-            "pytest-regressions",
-            "beautifulsoup4",
+            "pytest-regressions"
         ],
         # Note: This is only required for internal use
         "rtd": [
