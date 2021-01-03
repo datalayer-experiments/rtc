@@ -20,7 +20,6 @@ class WatchableDoc {
   }
 
   applyChanges (changes) {
-    console.log('------>>>>', changes)
     const oldState = Frontend.getBackendState(this.doc)
     const [newState, patch] = Backend.applyChanges(oldState, changes);
     (patch as any).state = newState

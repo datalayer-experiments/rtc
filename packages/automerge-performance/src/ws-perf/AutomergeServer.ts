@@ -11,9 +11,6 @@ import WatchableDoc from './WatchableDoc'
 
 const http = require('http')
 
-const mutex = require('lib0/dist/mutex.cjs')
-const map = require('lib0/dist/map.cjs')
-
 const wsReadyStateConnecting = 0
 const wsReadyStateOpen = 1
 
@@ -43,7 +40,6 @@ class WSSharedDoc extends WatchableDoc {
   constructor(doc: Doc) {
     super(doc)
     this.name = doc.docId
-    this.mux = mutex.createMutex()
   }
 }
 
@@ -53,7 +49,11 @@ const onMessage = (conn, doc, message) => {
   doc.conns.forEach((_, conn) => send(doc, conn, [m]))
 }
 
-export const getDoc = (docName) => map.setIfUndefined(docs, docName, () => {
+export const getDoc = (docName) => {
+  const k = docs.get(docName);
+  if (k) {
+    return k;
+  }
   const d = Automerge.init<Doc>()
   const doc1 = Automerge.change(d, doc => {
     doc.docId = docName;
@@ -65,7 +65,7 @@ export const getDoc = (docName) => map.setIfUndefined(docs, docName, () => {
   const sharedDoc = new WSSharedDoc(doc1)
   docs.set(docName, sharedDoc)
   return sharedDoc
-})
+}
 
 const onClose = (doc, conn, err) => {
   console.log('Closing', err)

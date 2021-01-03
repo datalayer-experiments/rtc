@@ -28,8 +28,7 @@
   },
   "dependencies": {
     "automerge-wasm-node": "file:./../../externals/automerge-wasm-nodejs",
-    "universal-websocket-client": "1.0.2",
-    "lib0": "0.2.35"
+    "universal-websocket-client": "1.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
