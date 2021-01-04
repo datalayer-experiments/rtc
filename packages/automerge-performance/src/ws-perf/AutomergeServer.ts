@@ -19,7 +19,7 @@ export type Doc = {
   textArea: Text;
 };
 
-const send = (doc, conn, changes) => {
+const send = (conn, doc: WSSharedDoc, changes) => {
   if (conn.readyState !== wsReadyStateConnecting && conn.readyState !== wsReadyStateOpen) {
     onClose(doc, conn, null)
   }
@@ -44,7 +44,7 @@ class WSSharedDoc {
 const onMessage = (conn, doc: WSSharedDoc, message) => {
   const m = message
   console.log(m)
-  doc.conns.forEach((_, conn) => send(doc, conn, [m]))
+  doc.conns.forEach((_, conn) => send(conn, doc, [m]))
 }
 
 export const getSharedDoc = (docName) => {
@@ -80,7 +80,7 @@ const setupWSConnection = (conn, req, { docName = req.url.slice(1).split('?')[0]
   conn.on('message', message => onMessage(conn, sharedDoc, message))
   conn.on('close', err => onClose(conn, sharedDoc, err))
   const changes = Automerge.getAllChanges(sharedDoc.doc)
-  send(sharedDoc, conn, changes)
+  send(conn, sharedDoc, changes)
 }
 
 const PORT = process.env.PORT || 4321
