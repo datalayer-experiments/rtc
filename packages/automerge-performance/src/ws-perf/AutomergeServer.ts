@@ -7,8 +7,6 @@ import Automerge, { Text } from 'automerge-wasm-node'
 // wasmBackend.initCodecFunctions(CodecFunctions)
 // Automerge.setDefaultBackend(wasmBackend)
 
-import WatchableDoc from './WatchableDoc'
-
 const http = require('http')
 
 const wsReadyStateConnecting = 0
@@ -33,23 +31,23 @@ const send = (doc, conn, changes) => {
   }
 }
 
-class WSSharedDoc extends WatchableDoc {
+class WSSharedDoc {
   private name = null;
-  private mux = null;
+  public doc = null;
   public conns = new Map()
   constructor(doc: Doc) {
-    super(doc)
-    this.name = doc.docId
+    this.doc = doc;
+    this.name = doc.docId;
   }
 }
 
-const onMessage = (conn, doc, message) => {
+const onMessage = (conn, doc: WSSharedDoc, message) => {
   const m = message
   console.log(m)
   doc.conns.forEach((_, conn) => send(doc, conn, [m]))
 }
 
-export const getDoc = (docName) => {
+export const getSharedDoc = (docName) => {
   const k = docs.get(docName);
   if (k) {
     return k;
@@ -67,7 +65,7 @@ export const getDoc = (docName) => {
   return sharedDoc
 }
 
-const onClose = (doc, conn, err) => {
+const onClose = (conn, doc: WSSharedDoc, err) => {
   console.log('Closing', err)
   if (doc.conns.has(conn)) {
     doc.conns.delete(conn)
@@ -77,15 +75,12 @@ const onClose = (doc, conn, err) => {
 
 const setupWSConnection = (conn, req, { docName = req.url.slice(1).split('?')[0], gc = true } = {}) => {
   conn.binaryType = 'arraybuffer'
-  const doc: WSSharedDoc = getDoc(docName)
-  doc.conns.set(conn, new Set())
-  conn.on('message', message => onMessage(conn, doc, message))
-  conn.on('close', err => onClose(doc, conn, err))
-  // put the following in a variables in a block so the interval handlers don't keep in in scope
-  {
-    const changes = Automerge.getAllChanges(doc.get())
-    send(doc, conn, changes)
-  }
+  const sharedDoc: WSSharedDoc = getSharedDoc(docName)
+  sharedDoc.conns.set(conn, new Set())
+  conn.on('message', message => onMessage(conn, sharedDoc, message))
+  conn.on('close', err => onClose(conn, sharedDoc, err))
+  const changes = Automerge.getAllChanges(sharedDoc.doc)
+  send(sharedDoc, conn, changes)
 }
 
 const PORT = process.env.PORT || 4321
