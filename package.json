@@ -24,7 +24,7 @@
     "automerge:performance:start-server": "yarn workspace @datalayer-rtc/automerge-performance run server:ws:start",
     "automerge:wait": "yarn workspace @datalayer-rtc/automerge run server:ws:wait",
     "automerge:performance:wait": "yarn workspace @datalayer-rtc/automerge-performance run server:ws:wait",
-    "jupyter-server:start": "fkill -s :8989 && jupyter server --port 8989 --ServerApp.token= --ServerApp.password='' --NotebookApp.allow_origin='*' --ServerApp.allow_origin='*' --ServerApp.tornado_settings=\"{ 'headers': { 'Access-Control-Allow-Origin': '*' } }\"",
+    "jupyter-server:start": "fkill -s :8989 && jupyter server --port 8989 --ServerApp.jpserver_extensions=\"{'datalayer_rtc': True}\"  --ServerApp.token= --ServerApp.password='' --NotebookApp.allow_origin='*' --ServerApp.allow_origin='*' --ServerApp.tornado_settings=\"{ 'headers': { 'Access-Control-Allow-Origin': '*' } }\"",
     "jupyter-server:wait-start": "npm-run-all --parallel jupyter-server:start jupyter-server:wait",
     "jupyter-server:wait": "wait-on tcp:8989",
     "textarea:automerge": "npm-run-all --parallel jupyter-server:start automerge:performance:start-server textarea:automerge:wait-start",

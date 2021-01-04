@@ -1,5 +1,4 @@
-# Copyright (c) Jupyter Development Team.
-# Distributed under the terms of the Modified BSD License.
+from .application import RtcApp
 
 # Borrowed from 
 # https://github.com/jupyterlab/jupyterlab repository
@@ -26,3 +25,10 @@ __version__ = '{}.{}.{}{}'.format(
     (''
      if version_info.releaselevel == 'final'
 else _specifier_[version_info.releaselevel] + str(version_info.serial)))
+
+
+def _jupyter_server_extension_paths():
+    return [{
+        'module': 'datalayer_rtc.application',
+        'app': RtcApp
+    }]

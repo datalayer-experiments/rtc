@@ -1,4 +1,3 @@
-"""myst-parser package setup."""
 from importlib import import_module
 
 from setuptools import find_packages, setup
@@ -11,8 +10,7 @@ setup(
     ),
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
-    url="https://github.com/jupyterlab/rtc",
-    project_urls={"Documentation": "https://rtc.readthedocs.io"},
+    url="https://github.com/datalayer-experiments/rtc",
     license="MIT",
     packages=find_packages(),
     classifiers=[
@@ -20,18 +18,15 @@ setup(
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.3",
-        "Programming Language :: Python :: 3.4",
-        "Programming Language :: Python :: 3.5",
-        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: Implementation :: CPython",
         "Programming Language :: Python :: Implementation :: PyPy",
     ],
-    keywords="jupyter rtc",
+    keywords="Datalayer RTC",
     python_requires=">=3.6",
     install_requires=[
         "jupyter_server",
-        "jupyter_server_proxy",
+#        "jupyter_server_proxy",
     ],
     extras_require={
         "sphinx": [],

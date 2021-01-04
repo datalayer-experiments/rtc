@@ -59,6 +59,7 @@ This repository contains sources taken from various repositories:
 [x] rust as python module
 [x] automerge performance branch + rust test with wasm
 [x] yjs rust test
-[ ] port (A) to jupyter-server (python + node.js)
+[x] port (A) to jupyter-server (python websocket proxy + node.js external server)
+[ ] port (A) to jupyter-server (python websocket proxy + rust external server)
 [ ] port (A) to jupyter-server (python + rust as python module)
 ```
