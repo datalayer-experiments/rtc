@@ -24,7 +24,9 @@ const send = (conn, doc: WSSharedDoc, changes) => {
     onClose(doc, conn, null)
   }
   try {
-    console.log(changes[0])
+    // console.log(changes[0])
+    console.log(JSON.stringify(changes[0]))
+
     conn.send(changes[0], err => { err != null && onClose(doc, conn, err) })
   } catch (e) {
     onClose(doc, conn, e)
@@ -43,7 +45,7 @@ class WSSharedDoc {
 
 const onMessage = (conn, doc: WSSharedDoc, message) => {
   const m = message
-  console.log(m)
+  console.log(JSON.stringify(m))
   doc.conns.forEach((_, conn) => send(conn, doc, [m]))
 }
 
