@@ -23,7 +23,7 @@ export const initDocumentText = (): Doc => {
   )
 }
 
-export const applyChanges = (doc: Doc, changes: any) => {
+export const applyChanges = (doc: Doc, changes: Uint8Array[]) => {
   return Automerge.applyChanges(doc, changes);
 }
 
