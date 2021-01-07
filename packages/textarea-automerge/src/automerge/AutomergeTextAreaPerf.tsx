@@ -38,11 +38,14 @@ const AutomergeTextAreaPerf = (props: {docId: string}) => {
         const data = new Uint8Array(message.data);
         const changedDoc = applyChanges(docRef.current, [data]);
         setDoc(changedDoc);
+        console.log("changedDoc : ", changedDoc);
       }
     }
   }, []);
 
   const handleTextChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    console.log("TypeScript::handleTextChange", event.target.value);
+    console.log("Doc : ", doc);
     event.preventDefault();
     let diff = simpleDiff(doc.textArea.toString(), event.target.value);
     const newDoc = applyInput(doc, diff);
