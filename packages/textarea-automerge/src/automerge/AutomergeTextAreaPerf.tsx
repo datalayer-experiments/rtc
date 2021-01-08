@@ -29,7 +29,9 @@ const AutomergeTextAreaPerf = (props: {docId: string}) => {
   const wsRef = useRef<WebSocket>();
 
   useEffect(() => {
-    wsRef.current = new WebSocket('ws://localhost:4321/automerge-room');
+    // wsRef.current = new WebSocket('ws://localhost:4321/automerge-room');
+    wsRef.current = new WebSocket('ws://127.0.0.1:8888/jupygloo/websocket?doc=automerge-room');
+
     // wsRef.current = new WebSocket('ws://localhost:8989/proxy/4321/automerge-room');
     // wsRef.current = new WebSocket('ws://localhost:8989/datalayer_rtc/proxy?port=4321&doc=automerge-room2');
     wsRef.current.binaryType = 'arraybuffer';
