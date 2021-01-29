@@ -9,7 +9,7 @@ const wsReadyStateOpen = 1
 
 export const docs = new Map<string, WSSharedDoc>()
 
-type String = {
+type AMString = {
   value: Text
 }
 
@@ -27,9 +27,9 @@ const broadcastChanges = (conn, doc: WSSharedDoc, changes: Uint8Array[]) => {
 
 class WSSharedDoc {
   private name = null;
-  public doc: String = null;
+  public doc: AMString = null;
   public conns = new Map()
-  constructor(doc: String) {
+  constructor(doc: AMString) {
     this.doc = doc;
   }
 }
@@ -51,7 +51,7 @@ export const getSharedDoc = (docName: string): WSSharedDoc => {
   if (k) {
     return k
   }
-  let doc = Automerge.init<String>()
+  let doc = Automerge.init<AMString>()
   doc = Automerge.change(doc, s => {
     s.value = new Text()
     s.value.insertAt(0, ...'hello string')
@@ -77,7 +77,7 @@ const setupWSConnection = (conn, req, {
   console.log('Setup WS Connection', docName)
   conn.binaryType = 'arraybuffer'
   const sharedDoc = getSharedDoc(docName)
-  const changes = Automerge.getChanges(Automerge.init<String>(), sharedDoc.doc)
+  const changes = Automerge.getChanges(Automerge.init<AMString>(), sharedDoc.doc)
   broadcastChanges(conn, sharedDoc, changes);
   sharedDoc.conns.set(conn, new Set())
   conn.on('message', message => onMessage(conn, docName, sharedDoc, message))
