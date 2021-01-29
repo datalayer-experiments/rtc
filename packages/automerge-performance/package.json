@@ -24,10 +24,11 @@
     "test:automerge": "jest src/automerge.test.js",
     "test:frontend": "jest src/frontend.test.js",
     "server:ws:start": "ts-node src/ws-perf/AutomergeServer.ts",
+    "server:ws:start:3": "ts-node src/ws-3/AutomergeServer.ts",
     "server:ws:wait": "wait-on tcp:4321"
   },
   "dependencies": {
-    "automerge-wasm-node": "file:./../../externals/automerge-wasm-nodejs",
+    "automerge": "file:///Users/echarles/repos/automerge-performance",
     "universal-websocket-client": "1.0.2"
   },
   "devDependencies": {

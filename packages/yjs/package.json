@@ -27,8 +27,9 @@
     "server:webrtc:start:2": "fkill -s :4444 && node src/webrtc/server-2/index.js",
     "server:webrtc:wait": "wait-on tcp:4444",
     "test": "jest",
-    "test:providers": "jest src/providers.test.ts",
-    "hello": "ts-node src/hello.ts",
+    "test:yjs": "jest src/yjs.test.ts",
+    "test:server:yjs": "npm-run-all --parallel --race server:ws:start test:providers",
+    "hello:yjs": "ts-node src/hello.ts",
     "providers": "npm-run-all --parallel --race server:ws:start server:webrtc:start:1 providers:wait-start",
     "providers:wait-start": "npm-run-all server:ws:wait server:webrtc:wait test:providers"
   },
