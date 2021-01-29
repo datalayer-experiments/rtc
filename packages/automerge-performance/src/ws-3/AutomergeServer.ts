@@ -13,12 +13,12 @@ type String = {
   value: Text
 }
 
-const send = (conn, doc: WSSharedDoc, changes: Uint8Array[]) => {
+const broadcastChanges = (conn, doc: WSSharedDoc, changes: Uint8Array[]) => {
   if (conn.readyState !== wsReadyStateConnecting && conn.readyState !== wsReadyStateOpen) {
     onClose(doc, conn, null)
   }
   try {
-    console.log('--- changes', changes)
+    console.log('--- Broadcast Changes', changes)
     changes.map(change => conn.send(change, err => { err != null && onClose(doc, conn, err) }))    
   } catch (e) {
     onClose(doc, conn, e)
@@ -36,11 +36,12 @@ class WSSharedDoc {
 
 const onMessage = (currentConn, docName, sharedDoc: WSSharedDoc, message: any) => {
   const change = new Uint8Array(message)
+  console.log('--- Change', change)
   sharedDoc.doc = Automerge.applyChanges(sharedDoc.doc, [change])
-  console.log('--- value', sharedDoc.doc.value.toString())
+  console.log('--- Doc Value', sharedDoc.doc.value.toString())
   sharedDoc.conns.forEach((_, conn) => {
     if (currentConn != conn ) {
-      send(conn, sharedDoc, [change])
+      broadcastChanges(conn, sharedDoc, [change])
     }
   })
 }
@@ -50,17 +51,20 @@ export const getSharedDoc = (docName: string): WSSharedDoc => {
   if (k) {
     return k
   }
-  const d1 = Automerge.init<String>()
-  const d2 = Automerge.change(d1, doc => {
-    doc.value = new Automerge.Text('hello');
+  let doc = Automerge.init<String>()
+  doc = Automerge.change(doc, s => {
+    s.value = new Text()
+    s.value.insertAt(0, ...'hello string')
+    s.value.deleteAt(0, 1)
+    s.value.insertAt(0, 'H')
   })
-  const sharedDoc = new WSSharedDoc(d2)
+  const sharedDoc = new WSSharedDoc(doc)
   docs.set(docName, sharedDoc)
   return sharedDoc
 }
 
 const onClose = (conn, doc: WSSharedDoc, err) => {
-  console.log('Closing', err)
+  console.log('Closing WS', err)
   if (doc.conns.has(conn)) {
     doc.conns.delete(conn)
   }
@@ -70,10 +74,11 @@ const onClose = (conn, doc: WSSharedDoc, err) => {
 const setupWSConnection = (conn, req, { 
   docName = req.url.slice(1).split('?')[0] as string
 } = {}) => {
+  console.log('Setup WS Connection', docName)
   conn.binaryType = 'arraybuffer'
   const sharedDoc = getSharedDoc(docName)
   const changes = Automerge.getChanges(Automerge.init<String>(), sharedDoc.doc)
-  send(conn, sharedDoc, changes);
+  broadcastChanges(conn, sharedDoc, changes);
   sharedDoc.conns.set(conn, new Set())
   conn.on('message', message => onMessage(conn, docName, sharedDoc, message))
   conn.on('close', err => onClose(conn, sharedDoc, err))
