@@ -63,16 +63,13 @@ export const getSharedDoc = (userId: string, docName: string): WSSharedDoc => {
     }
     console.log('--- Cursor for userId', userId, k.doc.cursors[userId])
     */
-    return k
+   return k
   }
   let doc = Automerge.init<AMString>({ actorId: userId})
-//  let doc = Automerge.from<AMString>({ value: new Text() })
   doc = Automerge.change(doc, s => {
     s.text = new Text()
-    const t = 'hello string'
+    const t = 'Initial content loaded from Server.'
     s.text.insertAt(0, ...t)
-    s.text.deleteAt(0, 1)
-    s.text.insertAt(0, 'H')
     s.cursors = {}
     s.cursors[userId] = s.text.getCursorAt(s.text.toString().length - 1)
   })
