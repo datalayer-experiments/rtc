@@ -11,13 +11,18 @@ const wsReadyStateOpen = 1
 export const docs = new Map<string, WSSharedDoc>()
 
 type CursorPerUser = {
-  [userName: string]: Automerge.Cursor
+  [uuid: string]: Automerge.Cursor
 }
 
-type AMString = {
-  text: Text
-  cursors: CursorPerUser
-}
+export type AMSelections = {
+  [uuid: string]: string
+};
+
+export type AMModelDB = {
+  text: Text;
+  cursors: CursorPerUser;
+  selections: AMSelections;
+};
 
 const broadcastChanges = (conn, doc: WSSharedDoc, changes: Uint8Array[]) => {
   if (conn.readyState !== wsReadyStateConnecting && conn.readyState !== wsReadyStateOpen) {
@@ -33,9 +38,9 @@ const broadcastChanges = (conn, doc: WSSharedDoc, changes: Uint8Array[]) => {
 
 class WSSharedDoc {
   private name = null;
-  public doc: AMString = null;
+  public doc: AMModelDB = null;
   public conns = new Map()
-  constructor(doc: AMString) {
+  constructor(doc: AMModelDB) {
     this.doc = doc;
   }
 }
@@ -57,15 +62,18 @@ export const getSharedDoc = (userId: string, docName: string): WSSharedDoc => {
   if (k) {
    return k
   }
-  let doc = Automerge.init<AMString>({ actorId: userId})
+  let doc = Automerge.init<AMModelDB>({ actorId: userId})
   doc = Automerge.change(doc, s => {
     s.text = new Text()
     const t = 'Initial content loaded from Server.'
     s.text.insertAt(0, ...t)
     s.cursors = {}
     s.cursors[userId] = s.text.getCursorAt(s.text.toString().length - 1)
+    s.selections = {}
+    s.selections[userId] = 'hello'
   })
-  console.log('--- Cursor for userId', userId, doc.cursors[userId])
+  console.log('--- Selection for uuid', userId, doc.selections[userId])
+  console.log('--- Cursor for uuid', userId, doc.cursors[userId])
   const sharedDoc = new WSSharedDoc(doc)
   docs.set(docName, sharedDoc)
   return sharedDoc
@@ -86,7 +94,7 @@ const setupWSConnection = (conn, req: IncomingMessage) => {
   console.log('Setup WS Connection', userId, docName)
   conn.binaryType = 'arraybuffer'
   const sharedDoc = getSharedDoc(userId, docName)
-  const changes = Automerge.getChanges(Automerge.init<AMString>(), sharedDoc.doc)
+  const changes = Automerge.getChanges(Automerge.init<AMModelDB>(), sharedDoc.doc)
   broadcastChanges(conn, sharedDoc, changes);
   sharedDoc.conns.set(conn, new Set())
   conn.on('message', message => onMessage(conn, docName, sharedDoc, message))
