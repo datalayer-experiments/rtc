@@ -55,14 +55,6 @@ const onMessage = (currentConn, docName, sharedDoc: WSSharedDoc, message: any) =
 export const getSharedDoc = (userId: string, docName: string): WSSharedDoc => {
   let k = docs.get(docName)
   if (k) {
-    /*
-    if (!k.doc.cursors[userId]) {
-      k.doc = Automerge.change(k.doc, s => {
-        s.cursors[userId] = s.text.getCursorAt(s.text.toString().length - 1)
-      })
-    }
-    console.log('--- Cursor for userId', userId, k.doc.cursors[userId])
-    */
    return k
   }
   let doc = Automerge.init<AMString>({ actorId: userId})
