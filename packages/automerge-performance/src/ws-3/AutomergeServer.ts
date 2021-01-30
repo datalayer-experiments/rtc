@@ -15,7 +15,7 @@ type CursorPerUser = {
 }
 
 export type AMSelections = {
-  [uuid: string]: string
+  [uuid: string]: any
 };
 
 export type AMModelDB = {
@@ -57,23 +57,23 @@ const onMessage = (currentConn, docName, sharedDoc: WSSharedDoc, message: any) =
   })
 }
 
-export const getSharedDoc = (userId: string, docName: string): WSSharedDoc => {
+export const getSharedDoc = (uuid: string, docName: string): WSSharedDoc => {
   let k = docs.get(docName)
   if (k) {
    return k
   }
-  let doc = Automerge.init<AMModelDB>({ actorId: userId})
+  let doc = Automerge.init<AMModelDB>({ actorId: uuid})
   doc = Automerge.change(doc, s => {
     s.text = new Text()
     const t = 'Initial content loaded from Server.'
     s.text.insertAt(0, ...t)
     s.cursors = {}
-    s.cursors[userId] = s.text.getCursorAt(s.text.toString().length - 1)
+    s.cursors[uuid] = s.text.getCursorAt(s.text.toString().length - 1)
     s.selections = {}
-    s.selections[userId] = 'hello'
+    s.selections[uuid] = 'hello selections'
   })
-  console.log('--- Selection for uuid', userId, doc.selections[userId])
-  console.log('--- Cursor for uuid', userId, doc.cursors[userId])
+  console.log('--- Cursor for uuid', uuid, doc.cursors[uuid])
+  console.log('--- Selections for uuid', uuid, doc.selections[uuid])
   const sharedDoc = new WSSharedDoc(doc)
   docs.set(docName, sharedDoc)
   return sharedDoc
