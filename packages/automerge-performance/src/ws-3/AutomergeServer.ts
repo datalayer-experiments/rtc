@@ -1,16 +1,18 @@
 import WebSocket from 'ws'
 
-import Automerge, { Text } from 'automerge'
-import { IncomingMessage } from 'http'
-
 const http = require('http')
 
+import { IncomingMessage } from 'http'
+
 const wsReadyStateConnecting = 0
+
 const wsReadyStateOpen = 1
+
+import Automerge, { Text } from 'automerge'
 
 export const docs = new Map<string, WSSharedDoc>()
 
-type CursorPerUser = {
+type Cursors = {
   [uuid: string]: Automerge.Cursor
 }
 
@@ -20,7 +22,7 @@ export type AMSelections = {
 
 export type AMModelDB = {
   text: Text;
-  cursors: CursorPerUser;
+  cursors: Cursors;
   selections: AMSelections;
 };
 
@@ -29,8 +31,21 @@ const broadcastChanges = (conn, doc: WSSharedDoc, changes: Uint8Array[]) => {
     onClose(doc, conn, null)
   }
   try {
-    console.log('--- Broadcast Changes:', changes)
-    changes.map(change => conn.send(change, err => { err != null && onClose(doc, conn, err) }))    
+//    changes.map(change => conn.send(change, err => { err != null && onClose(doc, conn, err) }))    
+    // Get the total length of all arrays.
+    let length = 0;
+    changes.forEach(item => {
+      length += item.length;
+    });
+    // Create a new array with total length and merge all source arrays.
+    let combined = new Uint8Array(length);
+    let offset = 0;
+    changes.forEach(item => {
+      combined.set(item, offset);
+      offset += item.length;
+    });
+//    console.log('--- Broadcast Changes:', combined)
+    conn.send(combined, err => { err != null && onClose(doc, conn, err) })  
   } catch (e) {
     onClose(doc, conn, e)
   }
@@ -46,10 +61,12 @@ class WSSharedDoc {
 }
 
 const onMessage = (currentConn, docName, sharedDoc: WSSharedDoc, message: any) => {
-  const change = new Uint8Array(message) 
-  console.log('--- Change:', change)
+  const change = new Uint8Array(message)
+//  console.log('--- Received Change:', change)
   sharedDoc.doc = Automerge.applyChanges(sharedDoc.doc, [change])
-  console.log('--- Current Doc Value:', sharedDoc.doc.text.toString())
+//  console.log('--- Current Value:', sharedDoc.doc.text.toString())
+//  console.log('--- Current Cursors:', sharedDoc.doc.cursors)
+//  console.log('--- Current Selections', sharedDoc.doc.selections)
   sharedDoc.conns.forEach((_, conn) => {
     if (currentConn != conn ) {
       broadcastChanges(conn, sharedDoc, [change])
@@ -67,13 +84,11 @@ export const getSharedDoc = (uuid: string, docName: string): WSSharedDoc => {
     s.text = new Text()
     const t = 'Initial content loaded from Server.'
     s.text.insertAt(0, ...t)
-    s.cursors = {}
-    s.cursors[uuid] = s.text.getCursorAt(s.text.toString().length - 1)
-    s.selections = {}
-    s.selections[uuid] = 'hello selections'
+//    s.cursors = {}
+//    s.cursors[uuid] = s.text.getCursorAt(s.text.toString().length - 1)
+//    s.selections = {}
+//    s.selections[uuid] = 'hello selections'
   })
-  console.log('--- Cursor for uuid', uuid, doc.cursors[uuid])
-  console.log('--- Selections for uuid', uuid, doc.selections[uuid])
   const sharedDoc = new WSSharedDoc(doc)
   docs.set(docName, sharedDoc)
   return sharedDoc
@@ -89,11 +104,11 @@ const onClose = (conn, doc: WSSharedDoc, err) => {
 
 const setupWSConnection = (conn, req: IncomingMessage) => {
   const urlPath = req.url.slice(1).split('?')[0]
-  const userId = urlPath.split('/')[0]
+  const uuid = urlPath.split('/')[0]
   const docName = urlPath.split('/')[1]
-  console.log('Setup WS Connection', userId, docName)
+  console.log('Setup WS Connection', uuid, docName)
   conn.binaryType = 'arraybuffer'
-  const sharedDoc = getSharedDoc(userId, docName)
+  const sharedDoc = getSharedDoc(uuid, docName)
   const changes = Automerge.getChanges(Automerge.init<AMModelDB>(), sharedDoc.doc)
   broadcastChanges(conn, sharedDoc, changes);
   sharedDoc.conns.set(conn, new Set())
