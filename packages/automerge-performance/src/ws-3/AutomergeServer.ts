@@ -11,18 +11,18 @@ const wsReadyStateOpen = 1
 import Automerge, { Text } from 'automerge'
 
 export const docs = new Map<string, WSSharedDoc>()
-
+/*
 type Cursors = {
   [uuid: string]: Automerge.Cursor
 }
-
+*/
 export type AMSelections = {
   [uuid: string]: any
 };
 
-export type AMModelDB = {
+export type AMModel = {
   text: Text;
-  cursors: Cursors;
+//  cursors: Cursors;
   selections: AMSelections;
 };
 
@@ -53,9 +53,9 @@ const broadcastChanges = (conn, doc: WSSharedDoc, changes: Uint8Array[]) => {
 
 class WSSharedDoc {
   private name = null;
-  public doc: AMModelDB = null;
+  public doc: AMModel = null;
   public conns = new Map()
-  constructor(doc: AMModelDB) {
+  constructor(doc: AMModel) {
     this.doc = doc;
   }
 }
@@ -79,7 +79,7 @@ export const getSharedDoc = (uuid: string, docName: string): WSSharedDoc => {
   if (k) {
    return k
   }
-  let doc = Automerge.init<AMModelDB>({ actorId: uuid})
+  let doc = Automerge.init<AMModel>({ actorId: uuid})
   doc = Automerge.change(doc, s => {
     s.text = new Text()
     const t = 'Initial content loaded from Server.'
@@ -109,7 +109,7 @@ const setupWSConnection = (conn, req: IncomingMessage) => {
   console.log('Setup WS Connection', uuid, docName)
   conn.binaryType = 'arraybuffer'
   const sharedDoc = getSharedDoc(uuid, docName)
-  const changes = Automerge.getChanges(Automerge.init<AMModelDB>(), sharedDoc.doc)
+  const changes = Automerge.getChanges(Automerge.init<AMModel>(), sharedDoc.doc)
   broadcastChanges(conn, sharedDoc, changes);
   sharedDoc.conns.set(conn, new Set())
   conn.on('message', message => onMessage(conn, docName, sharedDoc, message))
