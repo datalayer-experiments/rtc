@@ -10,28 +10,17 @@ const wsReadyStateOpen = 1
 
 import Automerge, { Text } from 'automerge'
 
-export const docs = new Map<string, WSSharedDoc>()
-/*
-type Cursors = {
-  [uuid: string]: Automerge.Cursor
-}
-*/
-export type AMSelections = {
-  [uuid: string]: any
+export const docs = new Map<string, AMSharedDoc>()
+
+export type AmDoc = {
+  [key: string]: any
 };
 
-export type AMModel = {
-  text: Text;
-//  cursors: Cursors;
-  selections: AMSelections;
-};
-
-const broadcastChanges = (conn, doc: WSSharedDoc, changes: Uint8Array[]) => {
+const broadcastChanges = (conn, doc: AMSharedDoc, changes: Uint8Array[]) => {
   if (conn.readyState !== wsReadyStateConnecting && conn.readyState !== wsReadyStateOpen) {
     onClose(doc, conn, null)
   }
   try {
-//    changes.map(change => conn.send(change, err => { err != null && onClose(doc, conn, err) }))    
     // Get the total length of all arrays.
     let length = 0;
     changes.forEach(item => {
@@ -44,29 +33,24 @@ const broadcastChanges = (conn, doc: WSSharedDoc, changes: Uint8Array[]) => {
       combined.set(item, offset);
       offset += item.length;
     });
-//    console.log('--- Broadcast Changes:', combined)
     conn.send(combined, err => { err != null && onClose(doc, conn, err) })  
   } catch (e) {
     onClose(doc, conn, e)
   }
 }
 
-class WSSharedDoc {
+class AMSharedDoc {
   private name = null;
-  public doc: AMModel = null;
+  public doc: AmDoc = null;
   public conns = new Map()
-  constructor(doc: AMModel) {
+  constructor(doc: AmDoc) {
     this.doc = doc;
   }
 }
 
-const onMessage = (currentConn, docName, sharedDoc: WSSharedDoc, message: any) => {
+const onMessage = (currentConn, docName, sharedDoc: AMSharedDoc, message: any) => {
   const change = new Uint8Array(message)
-//  console.log('--- Received Change:', change)
   sharedDoc.doc = Automerge.applyChanges(sharedDoc.doc, [change])
-//  console.log('--- Current Value:', sharedDoc.doc.text.toString())
-//  console.log('--- Current Cursors:', sharedDoc.doc.cursors)
-//  console.log('--- Current Selections', sharedDoc.doc.selections)
   sharedDoc.conns.forEach((_, conn) => {
     if (currentConn != conn ) {
       broadcastChanges(conn, sharedDoc, [change])
@@ -74,27 +58,23 @@ const onMessage = (currentConn, docName, sharedDoc: WSSharedDoc, message: any) =
   })
 }
 
-export const getSharedDoc = (uuid: string, docName: string): WSSharedDoc => {
+export const getAmSharedDoc = (uuid: string, docName: string): AMSharedDoc => {
   let k = docs.get(docName)
   if (k) {
    return k
   }
-  let doc = Automerge.init<AMModel>({ actorId: uuid})
-  doc = Automerge.change(doc, s => {
-    s.text = new Text()
-    const t = 'Initial content loaded from Server.'
-    s.text.insertAt(0, ...t)
-//    s.cursors = {}
-//    s.cursors[uuid] = s.text.getCursorAt(s.text.toString().length - 1)
-//    s.selections = {}
-//    s.selections[uuid] = 'hello selections'
+  let doc = Automerge.init<AmDoc>({ actorId: uuid})
+  doc = Automerge.change(doc, d => {
+    const t = new Text()
+    t.insertAt(0, ...'Initial content loaded from Server.')
+    d['value'] = t
   })
-  const sharedDoc = new WSSharedDoc(doc)
+  const sharedDoc = new AMSharedDoc(doc)
   docs.set(docName, sharedDoc)
   return sharedDoc
 }
 
-const onClose = (conn, doc: WSSharedDoc, err) => {
+const onClose = (conn, doc: AMSharedDoc, err) => {
   console.log('Closing WS', err)
   if (doc.conns.has(conn)) {
     doc.conns.delete(conn)
@@ -108,8 +88,8 @@ const setupWSConnection = (conn, req: IncomingMessage) => {
   const docName = urlPath.split('/')[1]
   console.log('Setup WS Connection', uuid, docName)
   conn.binaryType = 'arraybuffer'
-  const sharedDoc = getSharedDoc(uuid, docName)
-  const changes = Automerge.getChanges(Automerge.init<AMModel>(), sharedDoc.doc)
+  const sharedDoc = getAmSharedDoc(uuid, docName)
+  const changes = Automerge.getChanges(Automerge.init<AmDoc>(), sharedDoc.doc)
   broadcastChanges(conn, sharedDoc, changes);
   sharedDoc.conns.set(conn, new Set())
   conn.on('message', message => onMessage(conn, docName, sharedDoc, message))
