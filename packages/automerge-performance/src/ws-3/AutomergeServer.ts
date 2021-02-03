@@ -4,11 +4,9 @@ const http = require('http')
 
 import { IncomingMessage } from 'http'
 
-const wsReadyStateConnecting = 0
-
-const wsReadyStateOpen = 1
-
 import Automerge, { Text } from 'automerge'
+
+import { decodeChanges } from 'automerge/backend/columnar';
 
 export const docs = new Map<string, AMSharedDoc>()
 
@@ -16,23 +14,50 @@ export type AmDoc = {
   [key: string]: any
 };
 
+const WS_READY_STATE_CONNECTING = 0
+
+const WS_READY_STATE_OPEN = 1
+
+export const combine = (changes: Uint8Array[]) => {
+  // Get the total length of all arrays.
+  let length = 0;
+  changes.forEach(item => {
+    length += item.length;
+  });
+  // Create a new array with total length and merge all source arrays.
+  let combined = new Uint8Array(length);
+  let offset = 0;
+  changes.forEach(change => {
+    combined.set(change, offset);
+    offset += change.length;
+  });
+  return combined;
+}
+
+export const createLock = () => {
+  let lock = true;
+  return (a: any, b: any) => {
+    if (lock) {
+      lock = false;
+      try {
+        a();
+      } finally {
+        lock = true;
+      }
+    } else if (b !== undefined) {
+      b();
+    }
+  };
+};
+
+export const lock = createLock()
+
 const broadcastChanges = (conn, doc: AMSharedDoc, changes: Uint8Array[]) => {
-  if (conn.readyState !== wsReadyStateConnecting && conn.readyState !== wsReadyStateOpen) {
+  if (conn.readyState !== WS_READY_STATE_CONNECTING && conn.readyState !== WS_READY_STATE_OPEN) {
     onClose(doc, conn, null)
   }
   try {
-    // Get the total length of all arrays.
-    let length = 0;
-    changes.forEach(item => {
-      length += item.length;
-    });
-    // Create a new array with total length and merge all source arrays.
-    let combined = new Uint8Array(length);
-    let offset = 0;
-    changes.forEach(item => {
-      combined.set(item, offset);
-      offset += item.length;
-    });
+    const combined = combine(changes)
     conn.send(combined, err => { err != null && onClose(doc, conn, err) })  
   } catch (e) {
     onClose(doc, conn, e)
@@ -49,26 +74,32 @@ class AMSharedDoc {
 }
 
 const onMessage = (currentConn, docName, sharedDoc: AMSharedDoc, message: any) => {
-  const change = new Uint8Array(message)
-  sharedDoc.doc = Automerge.applyChanges(sharedDoc.doc, [change])
-  sharedDoc.conns.forEach((_, conn) => {
-    if (currentConn != conn ) {
-      broadcastChanges(conn, sharedDoc, [change])
-    }
-  })
+  lock(() => {
+    const changes = new Uint8Array(message)
+    console.log("Changes", docName, decodeChanges([changes]))
+    sharedDoc.doc = Automerge.applyChanges(sharedDoc.doc, [changes])
+    console.log("Doc", docName, sharedDoc.doc)
+    sharedDoc.conns.forEach((_, conn) => {
+      if (currentConn != conn ) {
+        broadcastChanges(conn, sharedDoc, [changes])
+      }
+    })  
+  }, () => {})
 }
 
-export const getAmSharedDoc = (uuid: string, docName: string): AMSharedDoc => {
+export const getAmSharedDoc = (uuid: string, docName: string, intialize: boolean): AMSharedDoc => {
   let k = docs.get(docName)
   if (k) {
    return k
   }
   let doc = Automerge.init<AmDoc>({ actorId: uuid})
-  doc = Automerge.change(doc, d => {
-    const t = new Text()
-    t.insertAt(0, ...'Initial content loaded from Server.')
-    d['value'] = t
-  })
+  if (intialize) {
+    doc = Automerge.change(doc, d => {
+      d['ownerId'] = uuid
+      d['value'] = new Text()
+      d['value'].insertAt(0, ...'Initial content loaded from Server.')
+    })
+  }
   const sharedDoc = new AMSharedDoc(doc)
   docs.set(docName, sharedDoc)
   return sharedDoc
@@ -84,11 +115,16 @@ const onClose = (conn, doc: AMSharedDoc, err) => {
 
 const setupWSConnection = (conn, req: IncomingMessage) => {
   const urlPath = req.url.slice(1).split('?')[0]
+  const params = req.url.slice(1).split('?')[1]
+  let initialize = false;
+  if (params.indexOf('initialize') > -1) {
+    initialize = true
+  }
   const uuid = urlPath.split('/')[0]
   const docName = urlPath.split('/')[1]
   console.log('Setup WS Connection', uuid, docName)
   conn.binaryType = 'arraybuffer'
-  const sharedDoc = getAmSharedDoc(uuid, docName)
+  const sharedDoc = getAmSharedDoc(uuid, docName, initialize)
   const changes = Automerge.getChanges(Automerge.init<AmDoc>(), sharedDoc.doc)
   broadcastChanges(conn, sharedDoc, changes);
   sharedDoc.conns.set(conn, new Set())
