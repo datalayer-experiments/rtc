@@ -4,7 +4,7 @@ const http = require('http')
 
 import { IncomingMessage } from 'http'
 
-import Automerge, { Text } from 'automerge'
+import Automerge, { List, Text } from 'automerge'
 
 import { decodeChanges } from 'automerge/backend/columnar';
 
@@ -307,6 +307,9 @@ export const getAmSharedDoc = (uuid: string, docName: string, intialize: boolean
       d['ownerId'] = uuid
       d['value'] = new Text()
       d['value'].insertAt(0, ...INITIAL_TEXT)
+      const list: List<string> = []
+      list.push('elem1')
+      d['list'] = list
       d['notebook'] = INITIAL_NOTEBOOK
     })
   }
