@@ -21,7 +21,7 @@ const WS_READY_STATE_OPEN = 1
 const INITIAL_TEXT = 'Initial content loaded from Server.'
 
 const INITIAL_NOTEBOOK = {
-    "nbformat": 4,
+  "nbformat": 4,
   "nbformat_minor": 5,
   "metadata": {
     "kernelspec": {
