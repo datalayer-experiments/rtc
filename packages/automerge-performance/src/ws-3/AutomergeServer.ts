@@ -296,23 +296,28 @@ const onMessage = (currentConn: WebSocket, docName: string, sharedDoc: AMSharedD
   }, () => {})
 }
 
-export const getAmSharedDoc = (uuid: string, docName: string, intialize: boolean): AMSharedDoc => {
+export const getAmSharedDoc = (uuid: string, docName: string, initialize: boolean): AMSharedDoc => {
   let k = docs.get(docName)
   if (k) {
    return k
   }
-  let doc = Automerge.init<AmDoc>({ actorId: uuid})
-  if (intialize) {
+  let doc = Automerge.init<AmDoc>(
+//    { actorId: uuid}
+  )
+  if (initialize) {
     doc = Automerge.change(doc, d => {
       d['ownerId'] = uuid
+      /*
       d['value'] = new Text()
       d['value'].insertAt(0, ...INITIAL_TEXT)
       const list: List<string> = []
       list.push('elem1')
       d['list'] = list
       d['notebook'] = INITIAL_NOTEBOOK
+      */
     })
   }
+  console.log('Initial Doc', doc)
   const sharedDoc = new AMSharedDoc(doc)
   docs.set(docName, sharedDoc)
   return sharedDoc
