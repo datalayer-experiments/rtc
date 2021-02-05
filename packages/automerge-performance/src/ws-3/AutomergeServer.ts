@@ -285,9 +285,9 @@ const onMessage = (currentConn: WebSocket, docName: string, sharedDoc: AMSharedD
   lock(() => {
     const changes = new Uint8Array(message)
     console.log('----------------')
-    console.log("Changes", docName, decodeChanges([changes]))
+    console.log("-> Change", docName, decodeChanges([changes]))
     sharedDoc.doc = Automerge.applyChanges(sharedDoc.doc, [changes])
-    console.log("Doc", docName, sharedDoc.doc)
+    console.log("-> Doc", docName, sharedDoc.doc)
     sharedDoc.conns.forEach((_, conn) => {
       if (currentConn != conn ) {
         broadcastChanges(conn, sharedDoc, [changes])
