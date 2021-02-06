@@ -289,8 +289,6 @@ const onMessage = (currentConn: WebSocket, docName: string, sharedDoc: AMSharedD
     sharedDoc.doc = Automerge.applyChanges(sharedDoc.doc, [changes])
     console.log('')
     console.log('Doc', docName, sharedDoc.doc)
-    console.log('')
-    console.log('CellOrder', docName, sharedDoc.doc['_cellOrder'])
     sharedDoc.conns.forEach((_, conn) => {
       if (currentConn != conn ) {
         broadcastChanges(conn, sharedDoc, [changes])
