@@ -285,7 +285,7 @@ const onMessage = (currentConn: WebSocket, docName: string, sharedDoc: AMSharedD
   lock(() => {
     const changes = new Uint8Array(message)
     console.log('-------------------------------------------------------------')
-//    console.log("Change", docName, decodeChanges([changes]))
+    console.log("Change", docName, decodeChanges([changes]))
     sharedDoc.doc = Automerge.applyChanges(sharedDoc.doc, [changes])
     console.log('Doc', docName, sharedDoc.doc)
 //    console.log('Notebook', docName, sharedDoc.doc['_notebook'])
