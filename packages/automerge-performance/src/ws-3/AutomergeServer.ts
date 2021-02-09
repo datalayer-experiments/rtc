@@ -44,9 +44,9 @@ const INITIAL_NOTEBOOK = {
    },
    "cells": [
    {
+    "id": "imposed-compiler",
     "cell_type": "code",
     "execution_count": null,
-    "id": "imposed-compiler",
     "metadata": {
      "mimeType": "text/x-ipython"
     },
@@ -65,162 +65,6 @@ const INITIAL_NOTEBOOK = {
     "outputs": [],
     "source": [
      "print('hello')dd"
-    ]
-   },
-   {
-    "cell_type": "code",
-    "execution_count": null,
-    "id": "chubby-confidentiality",
-    "metadata": {
-     "mimeType": "text/x-ipython"
-    },
-    "outputs": [],
-    "source": [
-     ""
-    ]
-   },
-   {
-    "cell_type": "code",
-    "execution_count": null,
-    "id": "usual-mongolia",
-    "metadata": {
-     "mimeType": "text/x-ipython"
-    },
-    "outputs": [],
-    "source": [
-     ""
-    ]
-   },
-   {
-    "cell_type": "code",
-    "execution_count": null,
-    "id": "secure-label",
-    "metadata": {
-     "mimeType": "text/x-ipython"
-    },
-    "outputs": [],
-    "source": [
-     "print('hello')"
-    ]
-   },
-   {
-    "cell_type": "code",
-    "execution_count": null,
-    "id": "likely-bracket",
-    "metadata": {
-     "mimeType": "text/x-ipython"
-    },
-    "outputs": [],
-    "source": [
-     ""
-    ]
-   },
-   {
-    "cell_type": "code",
-    "execution_count": null,
-    "id": "handed-blond",
-    "metadata": {
-     "mimeType": "text/x-ipython"
-    },
-    "outputs": [],
-    "source": [
-     "print('hello')"
-    ]
-   },
-   {
-    "cell_type": "code",
-    "execution_count": null,
-    "id": "residential-health",
-    "metadata": {
-     "mimeType": "text/x-ipython"
-    },
-    "outputs": [],
-    "source": [
-     ""
-    ]
-   },
-   {
-    "cell_type": "code",
-    "execution_count": null,
-    "id": "clean-ghana",
-    "metadata": {
-     "mimeType": "text/x-ipython"
-    },
-    "outputs": [],
-    "source": [
-     ""
-    ]
-   },
-   {
-    "cell_type": "code",
-    "execution_count": null,
-    "id": "eastern-enterprise",
-    "metadata": {
-     "mimeType": "text/x-ipython"
-    },
-    "outputs": [],
-    "source": [
-     "print('hello')"
-    ]
-   },
-   {
-    "cell_type": "code",
-    "execution_count": null,
-    "id": "removed-lemon",
-    "metadata": {
-     "mimeType": "text/x-ipython"
-    },
-    "outputs": [],
-    "source": [
-     ""
-    ]
-   },
-   {
-    "cell_type": "code",
-    "execution_count": null,
-    "id": "injured-queensland",
-    "metadata": {
-     "mimeType": "text/x-ipython"
-    },
-    "outputs": [],
-    "source": [
-     ""
-    ]
-   },
-   {
-    "cell_type": "code",
-    "execution_count": null,
-    "id": "after-surge",
-    "metadata": {
-     "mimeType": "text/x-ipython"
-    },
-    "outputs": [],
-    "source": [
-     "print('hello')"
-    ]
-   },
-   {
-    "cell_type": "code",
-    "execution_count": null,
-    "id": "suburban-encounter",
-    "metadata": {
-     "mimeType": "text/x-ipython"
-    },
-    "outputs": [],
-    "source": [
-     ""
-    ]
-   },
-   {
-    "cell_type": "code",
-    "execution_count": null,
-    "id": "developed-century",
-    "metadata": {
-     "mimeType": "text/x-ipython"
-    },
-    "outputs": [],
-    "source": [
-     ""
     ]
    },
   ],
@@ -287,8 +131,17 @@ const onMessage = (currentConn: WebSocket, docName: string, sharedDoc: AMSharedD
     console.log('-------------------------------------------------------------')
     console.log("Change", docName, decodeChanges([changes]))
     sharedDoc.doc = Automerge.applyChanges(sharedDoc.doc, [changes])
+    console.log('------')
     console.log('Doc', docName, sharedDoc.doc)
-//    console.log('Notebook', docName, sharedDoc.doc['_notebook'])
+//    console.log('Notebook', docName, sharedDoc.doc['notebook'])
+    console.log('------')
+    console.log('Notebook Cells')
+    if (sharedDoc.doc.notebook && sharedDoc.doc.notebook.cells) {
+      sharedDoc.doc.notebook.cells.map(cell => {
+        console.log('> ', cell.source.toString())
+        console.log(cell)
+      })
+    }
     sharedDoc.conns.forEach((_, conn) => {
       if (currentConn != conn ) {
         broadcastChanges(conn, sharedDoc, [changes])
@@ -309,12 +162,11 @@ export const getAmSharedDoc = (uuid: string, docName: string, initialize: boolea
     doc = Automerge.change(doc, d => {
       d['ownerId'] = uuid
       /*
-      d['value'] = new Text()
-      d['value'].insertAt(0, ...INITIAL_TEXT)
-      const list: List<string> = []
-      list.push('elem1')
-      d['list'] = list
-      d['notebook'] = INITIAL_NOTEBOOK
+      d.codeEditor = {}
+      d.codeEditor.value = new Text()
+      d.codeEditor.value.insertAt(0, ...INITIAL_TEXT)
+      d.notebook = {}
+      d.notebook.cells = new Array()
       */
     })
   }
