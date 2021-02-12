@@ -133,7 +133,8 @@ const onMessage = (currentConn: WebSocket, docName: string, sharedDoc: AMSharedD
     sharedDoc.doc = Automerge.applyChanges(sharedDoc.doc, [changes])
     console.log('------')
     console.log('Doc', docName, sharedDoc.doc)
-//    console.log('Notebook', docName, sharedDoc.doc['notebook'])
+    console.log('------')
+    console.log('Notebook', docName, sharedDoc.doc['notebook'])
     console.log('------')
     console.log('Notebook Cells')
     if (sharedDoc.doc.notebook && sharedDoc.doc.notebook.cells) {
