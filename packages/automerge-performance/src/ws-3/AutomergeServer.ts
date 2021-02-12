@@ -138,7 +138,9 @@ const onMessage = (currentConn: WebSocket, docName: string, sharedDoc: AMSharedD
     console.log('Notebook Cells')
     if (sharedDoc.doc.notebook && sharedDoc.doc.notebook.cells) {
       sharedDoc.doc.notebook.cells.map(cell => {
-//        console.log('> ', cell.source.toString())
+        if (cell.codeEditor && cell.codeEditor.value) {
+          console.log('> ', cell.codeEditor.value.toString())
+        }
         console.log(cell)
       })
     }
