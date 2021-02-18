@@ -22,6 +22,7 @@
     "hello": "ts-node src/index.ts",
     "test": "jest",
     "hello:automerge": "ts-node src/hello.ts",
+    "hello:clone": "node src/clone.js",
     "test:automerge": "jest src/Automerge.test.ts",
     "test:automerge:changes": "jest src/AutomergeChanges.test.ts",
     "test:automerge:typescript": "jest src/AutomergeTypescript.test.ts",
